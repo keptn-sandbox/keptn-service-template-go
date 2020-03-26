@@ -26,7 +26,7 @@ This implements a keptn-service-template-go for Keptn.
 
 ## Compatibility Matrix
 
-| Keptn Version    | [Simple-Test-Service Docker Image](https://hub.docker.com/r/your-username/keptn-service-template-go/tags) |
+| Keptn Version    | [Keptn-Service-Template-Go Docker Image](https://hub.docker.com/r/your-username/keptn-service-template-go/tags) |
 |:----------------:|:----------------------------------------:|
 |       0.6.1      | your-username/keptn-service-template-go:0.1.0 |
 

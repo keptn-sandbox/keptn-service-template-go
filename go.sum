@@ -96,6 +96,8 @@ github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dv
 github.com/kelseyhightower/envconfig v1.4.0/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
 github.com/keptn-sandbox/sdk-go v0.0.0-20200325080633-5f6a098e755e h1:ODklybELXNcBodi6kzl6VyxbrrKqkLOIw0WNQskm4L0=
 github.com/keptn-sandbox/sdk-go v0.0.0-20200325080633-5f6a098e755e/go.mod h1:5OvudugpY4ty+dALrNJwAEEOMN/3gEL3oK14rj+LS3E=
+github.com/keptn-sandbox/sdk-go v0.0.0-20200326074108-fdc1d1d61136 h1:Zvq1TxxYmM+X25B9uJB4iLYLVSfYicj50I2ELiK9Fi4=
+github.com/keptn-sandbox/sdk-go v0.0.0-20200326074108-fdc1d1d61136/go.mod h1:AkbcQIkqO9zt4zwS4IklYNlZuGq/e56l5nhjI2E2y0U=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFBFZlji/RkVcI2GknAs/DXo4wKdlNEc=
