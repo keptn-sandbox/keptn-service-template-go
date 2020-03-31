@@ -19,7 +19,6 @@ Quick start:
 
 # keptn-service-template-go
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/your-username/keptn-service-template-go)
-[![Build Status](https://travis-ci.org/your-username/keptn-service-template-go.svg?branch=master)](https://travis-ci.org/your-username/keptn-service-template-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/your-username/keptn-service-template-go)](https://goreportcard.com/report/github.com/your-username/keptn-service-template-go)
 
 This implements a keptn-service-template-go for Keptn.
@@ -96,6 +95,18 @@ If you want to get more insights, please look into [main.go](main.go), [deploy/s
 ### Testing Cloud Events
 
 We have dummy cloud-events in the form of PostMan Requests in the [test-events/](test-events/) directory.
+
+### GitHub Actions: Automated Pull Request Review
+
+This repo uses [reviewdog](https://github.com/reviewdog/reviewdog) for automated reviews of Pull Requests. 
+
+You can find the details in [.github/workflows/reviewdog.yml](.github/workflows/reviewdog.yml).
+
+### GitHub Actions: Unit Tests
+
+This repo has automated unit tests for pull requests. 
+
+You can find the details in [.github/workflows/tests.yml](.github/workflows/tests.yml).
 
 ## License
 
