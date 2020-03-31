@@ -87,7 +87,7 @@ If you want to get more insights, please look into [main.go](main.go), [deploy/s
 * Build the docker image: `docker build . -t your-username/keptn-service-template-go:dev` (Note: Replace `your-username` with your DockerHub account/organization)
 * Push the docker image to DockerHub: `docker push your-username/keptn-service-template-go:dev` (Note: Replace `your-username` with your DockerHub account/organization)
 * Deploy the service using `kubectl`: `kubectl apply -f deploy/`
-* Undeploy the service using `kubectl`: `kubectl deploy -f deploy/`
+* Delete/undeploy the service using `kubectl`: `kubectl delete -f deploy/`
 * Watch the deployment using `kubectl`: `kubectl -n keptn get deployment keptn-service-template-go -o wide`
 * Get logs using `kubectl`: `kubectl -n keptn logs deployment/keptn-service-template-go -f`
 * Watch the deployed pods using `kubectl`: `kubectl -n keptn get pods -l run=keptn-service-template-go`
