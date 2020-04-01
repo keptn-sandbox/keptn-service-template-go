@@ -146,17 +146,18 @@ It is assumed that the current development takes place in the master branch (eit
 To make use of the built-in automation using Travis CI for releasing a new version of this service, you should
 
 * branch away from master to a branch called `release-x.y.z` (where `x.y.z` is your version),
-* check the output of Travis CI, 
+* write release notes in the [releasenotes/](releasenotes/) folder,
+* check the output of Travis CI builds for the release branch, 
 * verify that your image was built and pushed to DockerHub with the right tags,
 * update the image tags in [deploy/service.yaml], and
 * test your service against a working Keptn installation.
 
-If any problems occur, fix them in the release branch.
+If any problems occur, fix them in the release branch and test them again.
 
 Once you have confirmed that everything works and your version is ready to go, you should
 
-* merge any changes from the release branch back to the master branch,
-* create a new release on the release branch using the [GitHub releases page](https://github.com/keptn-sandbox/keptn-service-template-go/releases).
+* create a new release on the release branch using the [GitHub releases page](https://github.com/keptn-sandbox/keptn-service-template-go/releases), and
+* merge any changes from the release branch back to the master branch.
 
 ## License
 
