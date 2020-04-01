@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: keptn-service-template-go
-          image: your-username/keptn-service-template-go:latest # Todo: Replace this with your image name
+          image: keptnsandbox/keptn-service-template-go:latest # Todo: Replace this with your image name
           ports:
             - containerPort: 8080
           env:
