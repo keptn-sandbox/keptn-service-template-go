@@ -5,29 +5,29 @@ This is a Keptn Service Template written in GoLang.
 Quick start:
 
 1. Download this repo as a zip-file, extract it into a new folder named after the service you want to create (e.g., simple-service) 
-1. Replace every occurrence of (docker) image names and tags from `your-username/keptn-service-template-go` to your docker organization and image name (e.g., `yourorganization/simple-service`)
+1. Replace every occurrence of (docker) image names and tags from `keptnsandbox/keptn-service-template-go` to your docker organization and image name (e.g., `yourorganization/simple-service`)
 1. Replace every occurrence of `keptn-service-template-go` with the name of your service (e.g., `simple-service`)
-1. Push your code a Git repo (e.g., GitHub) and adapt all links that contain `github.com` (e.g., to `github.com/your-username/simple-service`)
+1. Optional (but recommended): Create a git repo (e.g., on `github.com/your-username/simple-service`)
 1. Àdapt the [go.mod](go.mod) file and change `example.com/` to the actual package name (e.g., `github.com/your-username/simple-service`)
 1. Add yourself to the [CODEOWNERS](CODEOWNERS) file
 1. Initialize a git repository: 
   * `git init .`
   * `git add .`
   * `git commit -m "Initial Commit"`
-1. Optional: Push to upstream git repo
-1. Last but not least: Remove this intro within the README file 
+1. Optional: Push your code an upstream git repo (e.g., GitHub) and adapt all links that contain `github.com` (e.g., to `github.com/your-username/simple-service`)
+1. Last but not least: Remove this intro within the README file and make sure the README file properly states what this repository is about
 
 # keptn-service-template-go
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/your-username/keptn-service-template-go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/your-username/keptn-service-template-go)](https://goreportcard.com/report/github.com/your-username/keptn-service-template-go)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/keptnsandbox/keptn-service-template-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/keptnsandbox/keptn-service-template-go)](https://goreportcard.com/report/github.com/keptnsandbox/keptn-service-template-go)
 
 This implements a keptn-service-template-go for Keptn.
 
 ## Compatibility Matrix
 
-| Keptn Version    | [Keptn-Service-Template-Go Docker Image](https://hub.docker.com/r/your-username/keptn-service-template-go/tags) |
+| Keptn Version    | [Keptn-Service-Template-Go Docker Image](https://hub.docker.com/r/keptnsandbox/keptn-service-template-go/tags) |
 |:----------------:|:----------------------------------------:|
-|       0.6.1      | your-username/keptn-service-template-go:0.1.0 |
+|       0.6.1      | keptnsandbox/keptn-service-template-go:0.1.0 |
 
 ## Installation
 
@@ -53,7 +53,7 @@ kubectl -n keptn get pods -l run=keptn-service-template-go
 Adapt and use the following command in case you want to up- or downgrade your installed version (specified by the `$VERSION` placeholder):
 
 ```console
-kubectl -n keptn set image deployment/keptn-service-template-go keptn-service-template-go=your-username/keptn-service-template-go:$VERSION --record
+kubectl -n keptn set image deployment/keptn-service-template-go keptn-service-template-go=keptnsandbox/keptn-service-template-go:$VERSION --record
 ```
 
 ### Uninstall
@@ -66,7 +66,16 @@ kubectl delete -f deploy/service.yaml
 
 ## Development
 
-Development can be conducted using any GoLang compatible IDE or Text-Editor (e.g., Jetbrains GoLand, VSCode with Go plugins).
+Development can be conducted using any GoLang compatible IDE/editor (e.g., Jetbrains GoLand, VSCode with Go plugins).
+
+It is recommended to make use of branches as follows:
+
+* `master` contains the latest potentially unstable version
+* `release-*` contains a stable version of the service (e.g., `release-0.1.0` contains version 0.1.0)
+* create a new branch for any changes that you are working on, e.g., `feature/my-cool-stuff` or `bug/overflow`
+* once ready, create a pull request from that branch back to the `master` branch
+
+When writing code, it is recommended to follow the coding style suggested by the [Golang community](https://github.com/golang/go/wiki/CodeReviewComments).
 
 ### Where to start
 
@@ -83,18 +92,22 @@ If you want to get more insights, please look into [main.go](main.go), [deploy/s
 
 * Build the binary: `go build -ldflags '-linkmode=external' -v -o keptn-service-template-go`
 * Run tests: `go test -race -v ./...`
-* Build the docker image: `docker build . -t your-username/keptn-service-template-go:dev` (Note: Replace `your-username` with your DockerHub account/organization)
-* Push the docker image to DockerHub: `docker push your-username/keptn-service-template-go:dev` (Note: Replace `your-username` with your DockerHub account/organization)
+* Build the docker image: `docker build . -t keptnsandbox/keptn-service-template-go:dev` (Note: Ensure that you use the correct DockerHub account/organization)
+* Run the docker image locally: `docker run --rm -it -p 8080:8080 keptnsandbox/keptn-service-template-go:dev`
+* Push the docker image to DockerHub: `docker push keptnsandbox/keptn-service-template-go:dev` (Note: Ensure that you use the correct DockerHub account/organization)
 * Deploy the service using `kubectl`: `kubectl apply -f deploy/`
 * Delete/undeploy the service using `kubectl`: `kubectl delete -f deploy/`
 * Watch the deployment using `kubectl`: `kubectl -n keptn get deployment keptn-service-template-go -o wide`
 * Get logs using `kubectl`: `kubectl -n keptn logs deployment/keptn-service-template-go -f`
 * Watch the deployed pods using `kubectl`: `kubectl -n keptn get pods -l run=keptn-service-template-go`
-* Deploy the service using [Skaffold](https://skaffold.dev/): `skaffold run --tail` (Note: please adapt the image name in [skaffold.yaml](skaffold.yaml))
+* Deploy the service using [Skaffold](https://skaffold.dev/): `skaffold run --default-repo=your-docker-registry --tail` (Note: Replace `your-docker-registry` with your DockerHub username; also make sure to adapt the image name in [skaffold.yaml](skaffold.yaml))
+
 
 ### Testing Cloud Events
 
 We have dummy cloud-events in the form of PostMan Requests in the [test-events/](test-events/) directory.
+
+## Automation
 
 ### GitHub Actions: Automated Pull Request Review
 
@@ -107,6 +120,43 @@ You can find the details in [.github/workflows/reviewdog.yml](.github/workflows/
 This repo has automated unit tests for pull requests. 
 
 You can find the details in [.github/workflows/tests.yml](.github/workflows/tests.yml).
+
+### Travis-CI: Build Docker Images
+
+This repo uses [Travis-CI](https://travis-ci.org) to automatically build docker images. This process is optional and needs to be manually 
+enabled by signing in into [travis-ci.org](https://travis-ci.org) using GitHub and enabling Travis for your repository.
+
+After enabling Travis-CI, the following settings need to be added as secrets to your repository on the Travis-CI Repository Settings page:
+
+* `REGISTRY_USER` - your DockerHub username
+* `REGISTRY_PASSWORD` - a DockerHub [access token](https://hub.docker.com/settings/security) (alternatively, your DockerHub password)
+
+Furthermore, the variable `IMAGE` needs to be configured properly in the respective section:
+```yaml
+env:
+  global:
+    - IMAGE=keptnsandbox/keptn-service-template-go # PLEASE CHANGE THE IMAGE NAME!!!
+```
+You can find the implementation of the build-job in [.travis.yml](.travis.yml).
+
+## How to release a new version of this service
+
+It is assumed that the current development takes place in the master branch (either via Pull Requests or directly).
+
+To make use of the built-in automation using Travis CI for releasing a new version of this service, you should
+
+* branch away from master to a branch called `release-x.y.z` (where `x.y.z` is your version),
+* check the output of Travis CI, 
+* verify that your image was built and pushed to DockerHub with the right tags,
+* update the image tags in [deploy/service.yaml], and
+* test your service against a working Keptn installation.
+
+If any problems occur, fix them in the release branch.
+
+Once you have confirmed that everything works and your version is ready to go, you should
+
+* merge any changes from the release branch back to the master branch,
+* create a new release on the release branch using the [GitHub releases page](https://github.com/keptn-sandbox/keptn-service-template-go/releases).
 
 ## License
 
