@@ -4,7 +4,7 @@ This is a Keptn Service Template written in GoLang.
 
 Quick start:
 
-1. Download this repo as a zip-file, extract it into a new folder named after the service you want to create (e.g., simple-service) 
+1. Click [Use this template](https://github.com/keptn-sandbox/keptn-service-template-go/generate) on top of the repository, or download the repo as a zip-file, extract it into a new folder named after the service you want to create (e.g., simple-service) 
 1. Replace every occurrence of (docker) image names and tags from `keptnsandbox/keptn-service-template-go` to your docker organization and image name (e.g., `yourorganization/simple-service`)
 1. Replace every occurrence of `keptn-service-template-go` with the name of your service (e.g., `simple-service`)
 1. Optional (but recommended): Create a git repo (e.g., on `github.com/your-username/simple-service`)
@@ -18,8 +18,8 @@ Quick start:
 1. Last but not least: Remove this intro within the README file and make sure the README file properly states what this repository is about
 
 # keptn-service-template-go
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/keptnsandbox/keptn-service-template-go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/keptnsandbox/keptn-service-template-go)](https://goreportcard.com/report/github.com/keptnsandbox/keptn-service-template-go)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/keptn-sandbox/keptn-service-template-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/keptn-sandbox/keptn-service-template-go)](https://goreportcard.com/report/github.com/keptn-sandbox/keptn-service-template-go)
 
 This implements a keptn-service-template-go for Keptn.
 
