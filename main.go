@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/keptn-sandbox/sdk-go/pkg/keptn"
+	keptn "github.com/keptn/go-utils/pkg/lib"
 
 	"github.com/cloudevents/sdk-go/pkg/cloudevents"
 	"github.com/cloudevents/sdk-go/pkg/cloudevents/client"

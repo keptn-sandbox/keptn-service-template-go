@@ -1,10 +1,9 @@
 package main
 
 import (
-	"log"
-
 	"github.com/cloudevents/sdk-go/pkg/cloudevents"
-	"github.com/keptn-sandbox/sdk-go/pkg/keptn"
+	keptn "github.com/keptn/go-utils/pkg/lib"
+	"log"
 )
 
 /**
@@ -37,9 +36,14 @@ func HandleConfigurationChangeEvent(myKeptn *keptn.Keptn, incomingEvent cloudeve
 func HandleDeploymentFinishedEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.Event, data *keptn.DeploymentFinishedEventData) error {
 	log.Printf("Handling Deployment Finished Event: %s", incomingEvent.Context.GetID())
 
-	// ToDo: Start tests
-	// return myKeptn.SendTestsFinishedEvent(&incomingEvent, data.TestStrategy, data.DeploymentStrategy, "TODO", "PASS", data.Labels, "keptn-service-template-go")
+	// capture start time for tests
+	// startTime := time.Now()
 
+	// run tests
+	// ToDo: Implement your tests here
+
+	// Send Test Finished Event
+	// return myKeptn.SendTestsFinishedEvent(&incomingEvent, "", "", startTime, "pass", nil, "keptn-service-template-go")
 	return nil
 }
 
