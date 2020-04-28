@@ -105,7 +105,7 @@ If you want to get more insights, please look into [main.go](main.go), [deploy/s
 
 ### Testing Cloud Events
 
-We have dummy cloud-events in the form of PostMan Requests in the [test-events/](test-events/) directory.
+We have dummy cloud-events in the form of [RFC 2616](https://ietf.org/rfc/rfc2616.txt) requests in the [test-events/](test-events/) directory. These can be easily executed using third party plugins such as the [Huachao Mao REST Client in VS Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
 
 ## Automation
 
