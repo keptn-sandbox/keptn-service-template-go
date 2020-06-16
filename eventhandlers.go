@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
+
 	"github.com/cloudevents/sdk-go/pkg/cloudevents"
 	keptn "github.com/keptn/go-utils/pkg/lib"
-	"log"
 )
 
 /**
@@ -16,7 +17,8 @@ import (
   -> "sh.keptn.event.start-evaluation"
   -> "sh.keptn.events.evaluation-done"
   -> "sh.keptn.event.problem.open"
-  -> "sh.keptn.events.problem"
+	-> "sh.keptn.events.problem"
+	-> "sh.keptn.event.action.triggered"
 */
 
 //
@@ -85,5 +87,25 @@ func HandleEvaluationDoneEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.E
 func HandleProblemEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.Event, data *keptn.ProblemEventData) error {
 	log.Printf("Handling Problem Event: %s", incomingEvent.Context.GetID())
 
+	// Deprecated since Keptn 0.7.0 - use the HandleActionTriggeredEvent instead
+
+	return nil
+}
+
+//
+// Handles ActionTriggeredEventType = "sh.keptn.event.action.triggered"
+// TODO: add in your handler code
+//
+func HandleActionTriggeredEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.Event, data *keptn.ActionTriggeredEventData) error {
+	log.Printf("Handling Action Triggered Event: %s", incomingEvent.Context.GetID())
+
+	// check if action is supported
+	if data.Action.Action == "action-xyz" {
+		//myKeptn.SendActionStartedEvent() TODO: implement the SendActionStartedEvent in keptn/go-utils/pkg/lib/events.go
+
+		// Implement your remediation action here
+
+		//myKeptn.SendActionFinishedEvent() TODO: implement the SendActionFinishedEvent in keptn/go-utils/pkg/lib/events.go
+	}
 	return nil
 }
