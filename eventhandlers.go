@@ -101,11 +101,11 @@ func HandleActionTriggeredEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.
 
 	// check if action is supported
 	if data.Action.Action == "action-xyz" {
-		//myKeptn.SendActionStartedEvent() TODO: implement the SendActionStartedEvent in keptn/go-utils/pkg/lib/events.go
+		//myKeptn.SendActionStartedEvent()
 
 		// Implement your remediation action here
 
-		//myKeptn.SendActionFinishedEvent() TODO: implement the SendActionFinishedEvent in keptn/go-utils/pkg/lib/events.go
+		//myKeptn.SendActionFinishedEvent()
 	}
 	return nil
 }
