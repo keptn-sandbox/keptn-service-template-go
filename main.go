@@ -27,7 +27,7 @@ type envConfig struct {
 	// URL of the Keptn configuration service (this is where we can fetch files from the config repo)
 	ConfigurationServiceUrl string `envconfig:"CONFIGURATION_SERVICE" default:""`
 	// URL of the Keptn event broker (this is where this service sends cloudevents to)
-	EventBrokerUrl string `envconfig:"CONFIGURATION_SERVICE" default:""`
+	EventBrokerUrl string `envconfig:"EVENTBROKER" default:""`
 }
 
 /**
