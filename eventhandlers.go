@@ -21,6 +21,13 @@ import (
 	-> "sh.keptn.event.action.triggered"
 */
 
+
+// Handles ConfigureMonitoringEventType = "sh.keptn.event.monitoring.configure"
+func HandleConfigureMonitoringEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.Event, data *keptn.ConfigureMonitoringEventData) error {
+	log.Printf("Handling Configure Monitoring Event: %s", incomingEvent.Context.GetID())
+
+	return nil	
+}
 //
 // Handles ConfigurationChangeEventType = "sh.keptn.event.configuration.change"
 // TODO: add in your handler code

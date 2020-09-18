@@ -127,6 +127,17 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		}
 
 		return HandleActionTriggeredEvent(myKeptn, event, actionTriggeredEventData)
+	} else if event.Type() == keptn.ConfigureMonitoringEventType {
+		log.Printf("Processing Configure Monitoring Event")
+
+		configureMonitoringEventData := &keptn.ConfigureMonitoringEventData{}
+		err := event.DataAs(configureMonitoringEventData)
+		if err != nil {
+			log.Printf("Got Data Error: %s", err.Error())
+			return err
+		}
+
+		return HandleConfigureMonitoringEvent(myKeptn, event, configureMonitoringEventData)
 	}
 
 	// Unknown Event -> Throw Error!
