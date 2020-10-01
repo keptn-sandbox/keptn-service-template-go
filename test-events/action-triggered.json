@@ -1,0 +1,25 @@
+{
+  "type": "sh.keptn.event.action.triggered",
+  "specversion": "0.2",
+  "source": "test-event",
+  "id": "f2b878d3-03c0-4e8f-bc3f-454bc1b3d79d",
+  "time": "2019-06-07T07:02:15.64489Z",
+  "contenttype": "application/json",
+  "shkeptncontext": "08735340-6f9e-4b32-97ff-3b6c292bc509",
+  "data": {    
+    "action": {
+      "name": "Toggle feature flag",
+      "action": "featuretoggle",
+      "description": "Toggle feature flag PromotionCampaign from ON to OFF.",
+      "value": {
+        "PromotionCampaign": "off"
+      }
+    },
+    "problem": {
+      
+    },
+    "project": "sockshop",
+    "stage": "production",
+    "service": "carts"
+  }
+}

@@ -1,0 +1,23 @@
+{
+   "contenttype": "application/json",
+   "data": {
+     "end": "2020-09-27T21:59:35.813Z",
+     "eventContext": null,
+     "image": "Keptn Testing",
+     "labels": {
+       "buildId": "49"
+     },
+     "project": "sockshop",
+     "service": "carts",
+     "stage": "dev",
+     "start": "2020-09-27T21:49:35.676Z",
+     "tag": "49",
+     "teststrategy": "manual"
+   },
+   "id": "ace59102-8c44-4462-992c-4b3f8a0a287b",
+   "source": "test-event",
+   "specversion": "0.2",
+   "time": "2020-09-27T22:00:36.309Z",
+   "type": "sh.keptn.event.start-evaluation",
+   "shkeptncontext": "b4e6564f-cd5c-4b25-875b-9e13605aa4a3"
+ }

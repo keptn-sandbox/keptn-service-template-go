@@ -1,0 +1,33 @@
+{
+   "contenttype": "application/json",
+   "data": {
+     "ImpactedEntity": "Response time degradation on Web request service simplenode.dev.direct",
+     "PID": "5771906213902575546",
+     "ProblemDetails": {
+       "displayName": "546",
+       "endTime": -1,
+       "hasRootCause": true,
+       "id": "5771906213902575546_1600356960000V2",
+       "impactLevel": "SERVICE",
+       "severityLevel": "PERFORMANCE",
+       "startTime": 1600357260000,
+       "status": "OPEN"
+     },
+     "ProblemID": "546",
+     "ProblemTitle": "Response time degradation",
+     "ProblemURL": "https://youralertingtools/problemdetails;pid=5771906213902575546_1600356960000V2",
+     "State": "OPEN",
+     "labels": {
+       "Problem URL": "https://youralertingtools/problemdetails;pid=5771906213902575546_1600356960000V2"
+     },
+     "project": "keptn07project",
+     "service": "simplenode",
+     "stage": "dev"
+   },
+   "id": "950ec6c6-8f29-4774-83ae-98cbc92f5fb3",
+   "source": "test-event",
+   "specversion": "0.2",
+   "time": "2020-09-17T15:44:16.031Z",
+   "type": "sh.keptn.event.problem.open",
+   "shkeptncontext": "35373731-3930-4632-b133-393032353735"
+ }
