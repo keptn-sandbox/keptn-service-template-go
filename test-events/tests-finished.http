@@ -29,7 +29,7 @@ Content-Type: application/cloudevents+json
     "end": "2019-09-01 12:05:00",
     "labels": {
       "testid": "12345",
-      "buildnr": "build17",
+      "buildId": "build17",
       "runby": "JohnDoe"
     },
     "result": "pass"

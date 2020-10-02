@@ -1,0 +1,34 @@
+{
+    "type": "sh.keptn.internal.event.get-sli",
+    "contenttype": "application/json",
+    "specversion": "0.2",
+    "source": "test-event",
+    "data": {
+      "customFilters": [
+        {
+          "key":"filterKey",
+          "value":"filterValue"
+        }
+      ],
+      "deploymentstrategy": "direct",
+      "end": "2019-11-19T09:26:53Z",
+      "indicators": [
+        "sli_1",
+        "sli_2"
+      ],
+      "project": "sockshop",
+      "service": "carts",
+      "sliProvider": "keptn-service-template-go",
+      "stage": "dev",
+      "start": "2019-11-19T09:18:14Z",
+      "teststrategy": "performance",
+      "labels": {
+        "testid": "12345",
+        "buildId": "build17",
+        "runby": "JohnDoe"
+      }
+    },
+    "id": "432b41e2-e50e-4d55-a4ca-0076df5b0b29",
+    "time": "2019-11-19T09:26:54.282Z",
+    "shkeptncontext": "cc42042e-9d25-48cb-a0df-ad8c2e30b6d7"
+  }

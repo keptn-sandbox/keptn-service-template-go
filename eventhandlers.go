@@ -21,13 +21,13 @@ import (
 	-> "sh.keptn.event.action.triggered"
 */
 
-
 // Handles ConfigureMonitoringEventType = "sh.keptn.event.monitoring.configure"
 func HandleConfigureMonitoringEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.Event, data *keptn.ConfigureMonitoringEventData) error {
 	log.Printf("Handling Configure Monitoring Event: %s", incomingEvent.Context.GetID())
 
-	return nil	
+	return nil
 }
+
 //
 // Handles ConfigurationChangeEventType = "sh.keptn.event.configuration.change"
 // TODO: add in your handler code
@@ -82,6 +82,57 @@ func HandleStartEvaluationEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.
 //
 func HandleEvaluationDoneEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.Event, data *keptn.EvaluationDoneEventData) error {
 	log.Printf("Handling Evaluation Done Event: %s", incomingEvent.Context.GetID())
+
+	return nil
+}
+
+//
+// Handles InternalGetSLIEventType = "sh.keptn.internal.event.get-sli"
+// TODO: add in your handler code
+//
+func HandleInternalGetSLIEvent(myKeptn *keptn.Keptn, incomingEvent cloudevents.Event, data *keptn.InternalGetSLIEventData) error {
+	log.Printf("Handling Internal Get SLI Event: %s", incomingEvent.Context.GetID())
+
+	incomingGetSLIEventData := &keptn.InternalGetSLIEventData{}
+	incomingEvent.DataAs(incomingGetSLIEventData)
+
+	// Step 1 - Do we need to do something?
+	// Lets make sure we are only processing an event that really belongs to our SLI Provider
+	/* if incomingGetSLIEventData.SLIProvider != "keptn-service-template-go" {
+		return nil
+	}*/
+
+	// Step 2 - prep-work
+	// Get any additional input / configuration data, e.g
+	// Labels: get the incoming labels for potential config data and use it to pass more labels on result, e.g: links
+	// SLI.yaml: if your service uses SLI.yaml to store query definitions for SLIs get that file from Keptn
+	/* labels := incomingGetSLIEventData.Labels
+	if labels == nil {
+		labels = make(map[string]string)
+	}
+	testRunID := labels["testRunId"]*/
+
+	// sliConfigFileContent, err := myKeptn.GetKeptnResource("keptn-service-template-go/sli.yaml")
+
+	// Step 3 - do your work - iterate through the list of requested indicators and return their values
+	// Indicators: this is the list of indicators as requested in the SLO.yaml
+	// SLIResult: this is the array that will receive the results
+	/* indicators := incomingGetSLIEventData.Indicators
+	sliResults := []*keptn.SLIResult{}
+
+	for _, indicatorName := range indicators {
+		sliResult := &keptn.SLIResult{
+			Metric: indicatorName,
+			Value:  123.4,
+		}
+		sliResults = append(sliResults, sliResult)
+	}*/
+
+	// Step 4 - add additional context via labels
+	// labels["Link to Data Source"] = "https://mydatasource/myquery?testRun=" + testRunID
+
+	// Step 4 - send results back to Keptn
+	// return myKeptn.SendInternalGetSLIDoneEvent(incomingGetSLIEventData, sliResults, labels, err, "keptn-service-template-go")
 
 	return nil
 }

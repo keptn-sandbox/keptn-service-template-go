@@ -1,0 +1,15 @@
+{
+  "contenttype": "application/json",
+  "data": {
+    "eventContext": null,
+    "project": "sockshop",
+    "service": "carts",
+    "type": "dynatrace"
+  },
+  "id": "19b54fff-050e-42ed-bc4b-86112e1e65ba",
+  "source": "test-event",
+  "specversion": "0.2",
+  "time": "2020-10-01T12:07:24.240Z",
+  "type": "sh.keptn.event.monitoring.configure",
+  "shkeptncontext": "00688c77-a1db-4319-8210-540d7e745a3b"
+}
