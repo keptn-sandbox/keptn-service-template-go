@@ -4,6 +4,7 @@ This is a Keptn Service Template written in GoLang.
 
 Quick start:
 
+1. In case you want to contribute your service to keptn-sandbox or keptn-contrib, make sure you have read and understood the [Contributing Guidelines](https://github.com/keptn-sandbox/contributing).
 1. Click [Use this template](https://github.com/keptn-sandbox/keptn-service-template-go/generate) on top of the repository, or download the repo as a zip-file, extract it into a new folder named after the service you want to create (e.g., simple-service) 
 1. Replace every occurrence of (docker) image names and tags from `keptnsandbox/keptn-service-template-go` to your docker organization and image name (e.g., `yourorganization/simple-service`)
 1. Replace every occurrence of `keptn-service-template-go` with the name of your service (e.g., `simple-service`)
@@ -15,7 +16,10 @@ Quick start:
   * `git add .`
   * `git commit -m "Initial Commit"`
 1. Optional: Push your code an upstream git repo (e.g., GitHub) and adapt all links that contain `github.com` (e.g., to `github.com/your-username/simple-service`)
+1. Figure out whether your Kubernetes Deployment requires [any RBAC rules or a different service-account](https://github.com/keptn-sandbox/contributing#rbac-guidelines), and adapt [deploy/service.yaml](deploy/service.yaml) accordingly (initial setup is `serviceAccountName: keptn-default`).
 1. Last but not least: Remove this intro within the README file and make sure the README file properly states what this repository is about
+
+---
 
 # keptn-service-template-go
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/keptn-sandbox/keptn-service-template-go)
@@ -25,9 +29,12 @@ This implements a keptn-service-template-go for Keptn. If you want to learn more
 
 ## Compatibility Matrix
 
+*Please fill in your versions accordingly*
+
 | Keptn Version    | [Keptn-Service-Template-Go Docker Image](https://hub.docker.com/r/keptnsandbox/keptn-service-template-go/tags) |
 |:----------------:|:----------------------------------------:|
 |       0.6.1      | keptnsandbox/keptn-service-template-go:0.1.0 |
+|       0.7.1      | keptnsandbox/keptn-service-template-go:0.1.1 |
 
 ## Installation
 
