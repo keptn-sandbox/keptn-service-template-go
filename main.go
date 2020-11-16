@@ -7,7 +7,8 @@ import (
 	"log"
 	"os"
 
-	keptn "github.com/keptn/go-utils/pkg/lib"
+	keptnlib "github.com/keptn/go-utils/pkg/lib"
+	keptn "github.com/keptn/go-utils/pkg/lib/keptn"
 
 	"github.com/cloudevents/sdk-go/pkg/cloudevents"
 	"github.com/cloudevents/sdk-go/pkg/cloudevents/client"
@@ -36,7 +37,7 @@ type envConfig struct {
  * See https://github.com/keptn/spec/blob/0.1.3/cloudevents.md for details on the payload
  */
 func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error {
-	myKeptn, err := keptn.NewKeptn(&event, keptnOptions)
+	myKeptn, err := keptnlib.NewKeptn(&event, keptnOptions)
 
 	log.Printf("gotEvent(%s): %s - %s", event.Type(), myKeptn.KeptnContext, event.Context.GetID())
 
@@ -48,10 +49,10 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 	// ********************************************
 	// Lets test on each possible Event Type and call the respective handler function
 	// ********************************************
-	if event.Type() == keptn.ConfigurationChangeEventType {
+	if event.Type() == keptnlib.ConfigurationChangeEventType {
 		log.Printf("Processing Configuration Change Event")
 
-		configChangeEventData := &keptn.ConfigurationChangeEventData{}
+		configChangeEventData := &keptnlib.ConfigurationChangeEventData{}
 		err := event.DataAs(configChangeEventData)
 		if err != nil {
 			log.Printf("Got Data Error: %s", err.Error())
@@ -59,10 +60,10 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		}
 
 		return HandleConfigurationChangeEvent(myKeptn, event, configChangeEventData)
-	} else if event.Type() == keptn.DeploymentFinishedEventType {
+	} else if event.Type() == keptnlib.DeploymentFinishedEventType {
 		log.Printf("Processing Deployment Finished Event")
 
-		deployFinishEventData := &keptn.DeploymentFinishedEventData{}
+		deployFinishEventData := &keptnlib.DeploymentFinishedEventData{}
 		err := event.DataAs(deployFinishEventData)
 		if err != nil {
 			log.Printf("Got Data Error: %s", err.Error())
@@ -70,10 +71,10 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		}
 
 		return HandleDeploymentFinishedEvent(myKeptn, event, deployFinishEventData)
-	} else if event.Type() == keptn.TestsFinishedEventType {
+	} else if event.Type() == keptnlib.TestsFinishedEventType {
 		log.Printf("Processing Test Finished Event")
 
-		testsFinishedEventData := &keptn.TestsFinishedEventData{}
+		testsFinishedEventData := &keptnlib.TestsFinishedEventData{}
 		err := event.DataAs(testsFinishedEventData)
 		if err != nil {
 			log.Printf("Got Data Error: %s", err.Error())
@@ -81,10 +82,10 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		}
 
 		return HandleTestsFinishedEvent(myKeptn, event, testsFinishedEventData)
-	} else if event.Type() == keptn.StartEvaluationEventType {
+	} else if event.Type() == keptnlib.StartEvaluationEventType {
 		log.Printf("Processing Start Evaluation Event")
 
-		startEvaluationEventData := &keptn.StartEvaluationEventData{}
+		startEvaluationEventData := &keptnlib.StartEvaluationEventData{}
 		err := event.DataAs(startEvaluationEventData)
 		if err != nil {
 			log.Printf("Got Data Error: %s", err.Error())
@@ -92,10 +93,10 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		}
 
 		return HandleStartEvaluationEvent(myKeptn, event, startEvaluationEventData)
-	} else if event.Type() == keptn.EvaluationDoneEventType {
+	} else if event.Type() == keptnlib.EvaluationDoneEventType {
 		log.Printf("Processing Evaluation Done Event")
 
-		evaluationDoneEventData := &keptn.EvaluationDoneEventData{}
+		evaluationDoneEventData := &keptnlib.EvaluationDoneEventData{}
 		err := event.DataAs(evaluationDoneEventData)
 		if err != nil {
 			log.Printf("Got Data Error: %s", err.Error())
@@ -103,12 +104,12 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		}
 
 		return HandleEvaluationDoneEvent(myKeptn, event, evaluationDoneEventData)
-	} else if event.Type() == keptn.ProblemOpenEventType || event.Type() == keptn.ProblemEventType {
+	} else if event.Type() == keptnlib.ProblemOpenEventType || event.Type() == keptnlib.ProblemEventType {
 		// Subscribing to a problem.open or problem event is deprecated since Keptn 0.7 - subscribe to sh.keptn.event.action.triggered
 		log.Printf("Subscribing to a problem.open or problem event is not recommended since Keptn 0.7. Please subscribe to event of type: sh.keptn.event.action.triggered")
 		log.Printf("Processing Problem Event")
 
-		problemEventData := &keptn.ProblemEventData{}
+		problemEventData := &keptnlib.ProblemEventData{}
 		err := event.DataAs(problemEventData)
 		if err != nil {
 			log.Printf("Got Data Error: %s", err.Error())
@@ -116,10 +117,10 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		}
 
 		return HandleProblemEvent(myKeptn, event, problemEventData)
-	} else if event.Type() == keptn.ActionTriggeredEventType {
+	} else if event.Type() == keptnlib.ActionTriggeredEventType {
 		log.Printf("Processing Action Triggered Event")
 
-		actionTriggeredEventData := &keptn.ActionTriggeredEventData{}
+		actionTriggeredEventData := &keptnlib.ActionTriggeredEventData{}
 		err := event.DataAs(actionTriggeredEventData)
 		if err != nil {
 			log.Printf("Got Data Error: %s", err.Error())
@@ -127,10 +128,10 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		}
 
 		return HandleActionTriggeredEvent(myKeptn, event, actionTriggeredEventData)
-	} else if event.Type() == keptn.ConfigureMonitoringEventType {
+	} else if event.Type() == keptnlib.ConfigureMonitoringEventType {
 		log.Printf("Processing Configure Monitoring Event")
 
-		configureMonitoringEventData := &keptn.ConfigureMonitoringEventData{}
+		configureMonitoringEventData := &keptnlib.ConfigureMonitoringEventData{}
 		err := event.DataAs(configureMonitoringEventData)
 		if err != nil {
 			log.Printf("Got Data Error: %s", err.Error())

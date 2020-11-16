@@ -35,6 +35,7 @@ This implements a keptn-service-template-go for Keptn. If you want to learn more
 |:----------------:|:----------------------------------------:|
 |       0.6.1      | keptnsandbox/keptn-service-template-go:0.1.0 |
 |       0.7.1      | keptnsandbox/keptn-service-template-go:0.1.1 |
+|       0.7.2      | keptnsandbox/keptn-service-template-go:0.1.2 |
 
 ## Installation
 

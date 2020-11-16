@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"testing"
 
-	_ "github.com/keptn/go-utils/pkg/lib"
-	keptn "github.com/keptn/go-utils/pkg/lib"
+	keptnlib "github.com/keptn/go-utils/pkg/lib"
+	keptn "github.com/keptn/go-utils/pkg/lib/keptn"
 
 	"github.com/cloudevents/sdk-go/pkg/cloudevents"
 )
@@ -15,7 +15,7 @@ import (
 /**
  * loads a cloud event from the passed test json file and initializes a keptn object with it
  */
-func initializeTestObjects(eventFileName string) (*keptn.Keptn, *cloudevents.Event, error) {
+func initializeTestObjects(eventFileName string) (*keptnlib.Keptn, *cloudevents.Event, error) {
 	// load sample event
 	eventFile, err := ioutil.ReadFile(eventFileName)
 	if err != nil {
@@ -30,7 +30,7 @@ func initializeTestObjects(eventFileName string) (*keptn.Keptn, *cloudevents.Eve
 
 	var keptnOptions = keptn.KeptnOpts{}
 	keptnOptions.UseLocalFileSystem = true
-	myKeptn, err := keptn.NewKeptn(incomingEvent, keptnOptions)
+	myKeptn, err := keptnlib.NewKeptn(incomingEvent, keptnOptions)
 
 	return myKeptn, incomingEvent, err
 }
@@ -43,7 +43,7 @@ func TestHandleConfigureMonitoringEvent(t *testing.T) {
 		return
 	}
 
-	specificEvent := &keptn.ConfigureMonitoringEventData{}
+	specificEvent := &keptnlib.ConfigureMonitoringEventData{}
 	err = incomingEvent.DataAs(specificEvent)
 	if err != nil {
 		t.Errorf("Error getting keptn event data")
@@ -66,7 +66,7 @@ func TestHandleConfigurationChangeEvent(t *testing.T) {
 		return
 	}
 
-	specificEvent := &keptn.ConfigurationChangeEventData{}
+	specificEvent := &keptnlib.ConfigurationChangeEventData{}
 	err = incomingEvent.DataAs(specificEvent)
 	if err != nil {
 		t.Errorf("Error getting keptn event data")
@@ -89,7 +89,7 @@ func TestHandleDeploymentFinishedEvent(t *testing.T) {
 		return
 	}
 
-	specificEvent := &keptn.DeploymentFinishedEventData{}
+	specificEvent := &keptnlib.DeploymentFinishedEventData{}
 	err = incomingEvent.DataAs(specificEvent)
 	if err != nil {
 		t.Errorf("Error getting keptn event data")
@@ -112,7 +112,7 @@ func TestHandleTestsFinishedEvent(t *testing.T) {
 		return
 	}
 
-	specificEvent := &keptn.TestsFinishedEventData{}
+	specificEvent := &keptnlib.TestsFinishedEventData{}
 	err = incomingEvent.DataAs(specificEvent)
 	if err != nil {
 		t.Errorf("Error getting keptn event data")
@@ -135,7 +135,7 @@ func TestHandleStartEvaluationEvent(t *testing.T) {
 		return
 	}
 
-	specificEvent := &keptn.StartEvaluationEventData{}
+	specificEvent := &keptnlib.StartEvaluationEventData{}
 	err = incomingEvent.DataAs(specificEvent)
 	if err != nil {
 		t.Errorf("Error getting keptn event data")
@@ -158,7 +158,7 @@ func TestHandleEvaluationDoneEvent(t *testing.T) {
 		return
 	}
 
-	specificEvent := &keptn.EvaluationDoneEventData{}
+	specificEvent := &keptnlib.EvaluationDoneEventData{}
 	err = incomingEvent.DataAs(specificEvent)
 	if err != nil {
 		t.Errorf("Error getting keptn event data")
@@ -178,7 +178,7 @@ func TestHandleInternalGetSLIEvent(t *testing.T) {
 		return
 	}
 
-	specificEvent := &keptn.InternalGetSLIEventData{}
+	specificEvent := &keptnlib.InternalGetSLIEventData{}
 	err = incomingEvent.DataAs(specificEvent)
 	if err != nil {
 		t.Errorf("Error getting keptn event data")
@@ -202,7 +202,7 @@ func TestHandleProblemEvent(t *testing.T) {
 		return
 	}
 
-	specificEvent := &keptn.ProblemEventData{}
+	specificEvent := &keptnlib.ProblemEventData{}
 	err = incomingEvent.DataAs(specificEvent)
 	if err != nil {
 		t.Errorf("Error getting keptn event data")
@@ -225,7 +225,7 @@ func TestHandleActionTriggeredEvent(t *testing.T) {
 		return
 	}
 
-	specificEvent := &keptn.ActionTriggeredEventData{}
+	specificEvent := &keptnlib.ActionTriggeredEventData{}
 	err = incomingEvent.DataAs(specificEvent)
 	if err != nil {
 		t.Errorf("Error getting keptn event data")
