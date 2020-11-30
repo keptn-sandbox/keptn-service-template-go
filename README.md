@@ -131,8 +131,8 @@ You can find the details in [.github/workflows/tests.yml](.github/workflows/test
 
 ### Travis-CI: Build Docker Images
 
-This repo uses [Travis-CI](https://travis-ci.org) to automatically build docker images. This process is optional and needs to be manually 
-enabled by signing in into [travis-ci.org](https://travis-ci.org) using GitHub and enabling Travis for your repository.
+This repo uses [Travis-CI](https://travis-ci.com) to automatically build docker images. This process is optional and needs to be manually 
+enabled by signing in into [travis-ci.com](https://travis-ci.com) using GitHub and enabling Travis for your repository.
 
 After enabling Travis-CI, the following settings need to be added as secrets to your repository on the Travis-CI Repository Settings page:
 
