@@ -90,9 +90,10 @@ When writing code, it is recommended to follow the coding style suggested by the
 If you don't care about the details, your first entrypoint is [eventhandlers.go](eventhandlers.go). Within this file 
  you can add implementation for pre-defined Keptn Cloud events.
  
-To better understand Keptn CloudEvents, please look at the [Keptn Spec](https://github.com/keptn/spec).
+To better understand all variants of Keptn CloudEvents, please look at the [Keptn Spec](https://github.com/keptn/spec).
  
-If you want to get more insights, please look into [main.go](main.go), [deploy/service.yaml](deploy/service.yaml),
+If you want to get more insights into processing those CloudEvents or even defining your own CloudEvents in code, please 
+ look into [main.go](main.go) (specifically `processKeptnCloudEvent`), [deploy/service.yaml](deploy/service.yaml),
  consult the [Keptn docs](https://keptn.sh/docs/) as well as existing [Keptn Core](https://github.com/keptn/keptn) and
  [Keptn Contrib](https://github.com/keptn-contrib/) services.
 
