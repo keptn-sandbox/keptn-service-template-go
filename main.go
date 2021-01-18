@@ -32,6 +32,7 @@ type envConfig struct {
 const ServiceName = "keptn-service-template-go"
 
 // SendEvent sends a cloud event
+// ToDo: Once https://github.com/keptn/keptn/issues/2911 is resolved, we can refactor this function
 func SendEvent(myKeptn *keptnv2.Keptn, event cloudevents.Event, incomingEvent cloudevents.Event) error {
 	log.Printf("Sending CloudEvent back to Keptn: %s %s", event.Type(), event.Context.GetID())
 	// set source of CloudEvent
@@ -87,6 +88,7 @@ func parseKeptnCloudEventPayload(event cloudevents.Event, data interface{}) erro
  */
 func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error {
 	// create keptn handler
+	log.Printf("Initializing Keptn Handler")
 	myKeptn, err := keptnv2.NewKeptn(&event, keptnOptions)
 	if err != nil {
 		return errors.New("Could not create Keptn Handler: " + err.Error())
@@ -177,10 +179,8 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.ProjectCreateFinishedEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		// Post-handler for deployment.finished Cloud Events (e.g., modify helm-chart, ...)
-
-		break
-
+		// Just log this event
+		return GenericLogKeptnCloudEventHandler(myKeptn, event, eventData)
 	// -------------------------------------------------------
 	// sh.keptn.event.service.create - Note: This is due to change
 	case keptnv2.GetStartedEventType(keptnv2.ServiceCreateTaskName): // sh.keptn.event.service.create.started
@@ -201,9 +201,8 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.ServiceCreateFinishedEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		// Post-handler for deployment.finished Cloud Events (e.g., modify helm-chart, ...)
-
-		break
+		// Just log this event
+		return GenericLogKeptnCloudEventHandler(myKeptn, event, eventData)
 
 	// -------------------------------------------------------
 	// sh.keptn.event.approval
@@ -213,7 +212,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.ApprovalTriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		break
+		return HandleApprovalTriggeredEvent(myKeptn, event, eventData)
 	case keptnv2.GetStartedEventType(keptnv2.ApprovalTaskName): // sh.keptn.event.approval.started
 		log.Printf("Processing Approval.Started Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
@@ -243,7 +242,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.DeploymentTriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		break
+		return HandleDeploymentTriggeredEvent(myKeptn, event, eventData)
 	case keptnv2.GetStartedEventType(keptnv2.DeploymentTaskName): // sh.keptn.event.deployment.started
 		log.Printf("Processing Deployment.Started Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
@@ -254,14 +253,6 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 
 		// Just log this event
 		return GenericLogKeptnCloudEventHandler(myKeptn, event, eventData)
-	case keptnv2.GetStatusChangedEventType(keptnv2.DeploymentTaskName): // sh.keptn.event.deployment.status.changed
-		log.Printf("Processing Deployment.Started Event")
-		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
-		// notify an external service (e.g., for logging purposes).
-
-		// Todo: ?
-
-		break
 	case keptnv2.GetFinishedEventType(keptnv2.DeploymentTaskName): // sh.keptn.event.deployment.finished
 		log.Printf("Processing Deployment.Finished Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
@@ -281,7 +272,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.TestTriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		break
+		return HandleTestTriggeredEvent(myKeptn, event, eventData)
 	case keptnv2.GetStartedEventType(keptnv2.TestTaskName): // sh.keptn.event.test.started
 		log.Printf("Processing Test.Started Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
@@ -292,14 +283,6 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 
 		// Just log this event
 		return GenericLogKeptnCloudEventHandler(myKeptn, event, eventData)
-	case keptnv2.GetStatusChangedEventType(keptnv2.TestTaskName): // sh.keptn.event.test.status.changed
-		log.Printf("Processing Test.Started Event")
-		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
-		// notify an external service (e.g., for logging purposes).
-
-		// Todo ?
-
-		break
 	case keptnv2.GetFinishedEventType(keptnv2.TestTaskName): // sh.keptn.event.test.finished
 		log.Printf("Processing Test.Finished Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
@@ -319,7 +302,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.EvaluationTriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		break
+		return HandleEvaluationTriggeredEvent(myKeptn, event, eventData)
 	case keptnv2.GetStartedEventType(keptnv2.EvaluationTaskName): // sh.keptn.event.evaluation.started
 		log.Printf("Processing Evaluation.Started Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
@@ -349,9 +332,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.ReleaseTriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		// ToDo ?
-
-		break
+		return HandleReleaseTriggeredEvent(myKeptn, event, eventData)
 	case keptnv2.GetStartedEventType(keptnv2.ReleaseTaskName): // sh.keptn.event.release.started
 		log.Printf("Processing Release.Started Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
@@ -385,16 +366,13 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 
 	// -------------------------------------------------------
 	// sh.keptn.event.remediation
-	// ToDo: Replace "remediation" with keptnv2.RemediationTaskName once this PR has been merged: https://github.com/keptn/go-utils/pull/230
 	case keptnv2.GetTriggeredEventType(keptnv2.RemediationTaskName): // sh.keptn.event.remediation.triggered
 		log.Printf("Processing Remediation.Triggered Event")
 
 		eventData := &keptnv2.RemediationTriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		// ToDo ?
-
-		break
+		return HandleRemediationTriggeredEvent(myKeptn, event, eventData)
 	case keptnv2.GetStartedEventType(keptnv2.RemediationTaskName): // sh.keptn.event.remediation.started
 		log.Printf("Processing Remediation.Started Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
@@ -406,7 +384,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		// Just log this event
 		return GenericLogKeptnCloudEventHandler(myKeptn, event, eventData)
 	case keptnv2.GetStatusChangedEventType(keptnv2.RemediationTaskName): // sh.keptn.event.remediation.status.changed
-		log.Printf("Processing Remediation.Started Event")
+		log.Printf("Processing Remediation.Status.Changed Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
 		// notify an external service (e.g., for logging purposes).
 
@@ -484,7 +462,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.GetSLITriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		return HandleGetSliEvent(myKeptn, event, eventData)
+		return HandleGetSliTriggeredEvent(myKeptn, event, eventData)
 	case keptnv2.GetStartedEventType(keptnv2.GetSLITaskName): // sh.keptn.event.get-sli.started
 		log.Printf("Processing Get-SLI.Started Event")
 
@@ -512,7 +490,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		parseKeptnCloudEventPayload(event, eventData)
 
 		// Handle old configure-monitoring event
-		return OldHandleConfigureMonitoringTriggeredEvent(myKeptn, event, eventData)
+		return OldHandleConfigureMonitoringEvent(myKeptn, event, eventData)
 
 	case keptnv2.GetTriggeredEventType(keptnv2.ConfigureMonitoringTaskName): // sh.keptn.event.configure-monitoring.triggered
 		log.Printf("Processing configure-monitoring.Triggered Event")
@@ -613,8 +591,11 @@ func _main(args []string, env envConfig) int {
 	ctx := context.Background()
 	ctx = cloudevents.WithEncodingStructured(ctx)
 
+	log.Printf("Creating new http handler")
+
 	// configure http server to receive cloudevents
 	p, err := cloudevents.NewHTTP(cloudevents.WithPath(env.Path), cloudevents.WithPort(env.Port))
+
 	if err != nil {
 		log.Fatalf("failed to create client, %v", err)
 	}
@@ -622,6 +603,8 @@ func _main(args []string, env envConfig) int {
 	if err != nil {
 		log.Fatalf("failed to create client, %v", err)
 	}
+
+	log.Printf("Starting receiver")
 	log.Fatal(c.StartReceiver(ctx, processKeptnCloudEvent))
 
 	return 0

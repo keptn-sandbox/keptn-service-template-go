@@ -23,9 +23,9 @@ func GenericLogKeptnCloudEventHandler(myKeptn *keptnv2.Keptn, incomingEvent clou
 	return nil
 }
 
-// OldHandleConfigureMonitoringTriggeredEvent handles old configure-monitoring events
+// OldHandleConfigureMonitoringEvent handles old configure-monitoring events
 // TODO: add in your handler code
-func OldHandleConfigureMonitoringTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptn.ConfigureMonitoringEventData) error {
+func OldHandleConfigureMonitoringEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptn.ConfigureMonitoringEventData) error {
 	log.Printf("Handling old configure-monitoring Event: %s", incomingEvent.Context.GetID())
 
 	return nil
@@ -55,6 +55,14 @@ func HandleTestTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.
 	return nil
 }
 
+// HandleApprovalTriggeredEvent handles approval.triggered events
+// TODO: add in your handler code
+func HandleApprovalTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.ApprovalTriggeredEventData) error {
+	log.Printf("Handling approval.triggered Event: %s", incomingEvent.Context.GetID())
+
+	return nil
+}
+
 // HandleEvaluationTriggeredEvent handles evaluation.triggered events
 // TODO: add in your handler code
 func HandleEvaluationTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.EvaluationTriggeredEventData) error {
@@ -63,7 +71,24 @@ func HandleEvaluationTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloude
 	return nil
 }
 
+// HandleReleaseTriggeredEvent handles release.triggered events
+// TODO: add in your handler code
+func HandleReleaseTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.ReleaseTriggeredEventData) error {
+	log.Printf("Handling release.triggered Event: %s", incomingEvent.Context.GetID())
+
+	return nil
+}
+
+// HandleRemediationTriggeredEvent handles remediation.triggered events
+// TODO: add in your handler code
+func HandleRemediationTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.RemediationTriggeredEventData) error {
+	log.Printf("Handling remediation.triggered Event: %s", incomingEvent.Context.GetID())
+
+	return nil
+}
+
 // sendGetSliFinishedCloudEvent is a helper function to send a get-sli.finished event
+// ToDo: This will need to be refactored once https://github.com/keptn/keptn/issues/2913 is ready
 func sendGetSliFinishedCloudEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.GetSLITriggeredEventData,
 	status keptnv2.StatusType, result keptnv2.ResultType, message string) error {
 	log.Printf("Sending getSli Finished Cloud Event with status=%s and result=%s back to Keptn (%s)", status, result, message)
@@ -82,9 +107,10 @@ func sendGetSliFinishedCloudEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudeve
 	return SendEvent(myKeptn, finishedEvent, incomingEvent)
 }
 
-// HandleGetSliEvent handles get-sli events
+// HandleGetSliTriggeredEvent handles get-sli.triggered events if SLIProvider == keptn-service-template-go
+// This function acts as an example showing how to handle get-sli events by sending .started and .finished events
 // TODO: adapt handler code to your needs
-func HandleGetSliEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.GetSLITriggeredEventData) error {
+func HandleGetSliTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.GetSLITriggeredEventData) error {
 	log.Printf("Handling get-sli.triggered Event: %s", incomingEvent.Context.GetID())
 
 	// Step 1 - Do we need to do something?
@@ -96,6 +122,7 @@ func HandleGetSliEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, 
 
 	// Step 2 - Send out a get-sli.started CloudEvent
 	// The get-sli.started cloud-event is new since Keptn 0.8.0 and is required for the task to start
+	// ToDo: This will need to be refactored once https://github.com/keptn/keptn/issues/2913 is ready
 	getSliStartedData := keptnv2.GetSLIStartedEventData{}
 
 	getSliStartedData.EventData = data.EventData
@@ -126,6 +153,8 @@ func HandleGetSliEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, 
 	sliFile := "keptn-service-template-go/sli.yaml"
 	sliConfigFileContent, err := myKeptn.GetKeptnResource(sliFile)
 
+	// FYI you do not need to "fail" if sli.yaml is missing, you can also assume smart defaults like we do
+	// in keptn-contrib/dynatrace-service and keptn-contrib/prometheus-service
 	if err != nil {
 		// failed to fetch sli config file
 		errMsg := fmt.Sprintf("Failed to fetch SLI file %s from config repo: %s", sliFile, err.Error())
@@ -154,6 +183,7 @@ func HandleGetSliEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, 
 	labels["Link to Data Source"] = "https://mydatasource/myquery?testRun=" + testRunID
 
 	// Step 8 - Build get-sli.finished event data
+	// ToDo: This will need to be refactored once https://github.com/keptn/keptn/issues/2913 is ready
 	getSliFinishedEventData := keptnv2.GetSLIFinishedEventData{
 		EventData: keptnv2.EventData{
 			Project: data.Project,
@@ -174,12 +204,12 @@ func HandleGetSliEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, 
 		},
 	}
 
-	// Step 8 - Convert To CloudEvent
+	// Step 9 - Convert To CloudEvent
 	finishedEvent := cloudevents.NewEvent()
 	finishedEvent.SetType(keptnv2.GetFinishedEventType(keptnv2.GetSLITaskName))
 	finishedEvent.SetData(cloudevents.ApplicationJSON, getSliFinishedEventData)
 
-	// Step 9 - send action.finished CloudEvent back to Keptn
+	// Step 10 - send action.finished CloudEvent back to Keptn
 	return SendEvent(myKeptn, finishedEvent, incomingEvent)
 }
 
