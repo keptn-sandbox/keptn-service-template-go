@@ -193,11 +193,7 @@ func HandleGetSliTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevent
 			Status:  keptnv2.StatusSucceeded,
 			Result:  keptnv2.ResultPass,
 		},
-		GetSLI: struct {
-			Start           string               `json:"start"`
-			End             string               `json:"end"`
-			IndicatorValues []*keptnv2.SLIResult `json:"indicatorValues"`
-		}{
+		GetSLI: keptnv2.GetSLIFinished{
 			IndicatorValues: sliResults,
 			Start:           data.GetSLI.Start,
 			End:             data.GetSLI.End,
