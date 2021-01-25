@@ -129,33 +129,23 @@ This repo has automated unit tests for pull requests.
 
 You can find the details in [.github/workflows/tests.yml](.github/workflows/tests.yml).
 
-### Travis-CI: Build Docker Images
+### GH Actions/Workflow: Build Docker Images
 
-This repo uses [Travis-CI](https://travis-ci.com) to automatically build docker images. This process is optional and needs to be manually 
-enabled by signing in into [travis-ci.com](https://travis-ci.com) using GitHub and enabling Travis for your repository.
+This repo uses GH Actions and Workflows to test the code and automatically build docker images.
 
-After enabling Travis-CI, the following settings need to be added as secrets to your repository on the Travis-CI Repository Settings page:
-
+Docker Images are automatically pushed based on the configuration done in [.ci_env](.ci_env) and the two [GitHub Secrets](https://github.com/keptn-sandbox/keptn-service-template-go/settings/secrets/actions)
 * `REGISTRY_USER` - your DockerHub username
 * `REGISTRY_PASSWORD` - a DockerHub [access token](https://hub.docker.com/settings/security) (alternatively, your DockerHub password)
-
-Furthermore, the variable `IMAGE` needs to be configured properly in the respective section:
-```yaml
-env:
-  global:
-    - IMAGE=keptnsandbox/keptn-service-template-go # PLEASE CHANGE THE IMAGE NAME!!!
-```
-You can find the implementation of the build-job in [.travis.yml](.travis.yml).
 
 ## How to release a new version of this service
 
 It is assumed that the current development takes place in the master branch (either via Pull Requests or directly).
 
-To make use of the built-in automation using Travis CI for releasing a new version of this service, you should
+To make use of the built-in automation using GH Actions for releasing a new version of this service, you should
 
 * branch away from master to a branch called `release-x.y.z` (where `x.y.z` is your version),
 * write release notes in the [releasenotes/](releasenotes/) folder,
-* check the output of Travis CI builds for the release branch, 
+* check the output of GH Actions builds for the release branch, 
 * verify that your image was built and pushed to DockerHub with the right tags,
 * update the image tags in [deploy/service.yaml], and
 * test your service against a working Keptn installation.
