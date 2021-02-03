@@ -36,7 +36,7 @@ jobs:
         with:
           fetch-depth: 0 # need to checkout "all commits" for certain features to work (e.g., get all changed files)
 
-      - name: Load CI Environemnt from .ci_env
+      - name: Load CI Environment from .ci_env
         id: load_ci_env
         uses: c-py/action-dotenv-to-setenv@v2
         with:
@@ -105,7 +105,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Load CI Environemnt from .ci_env
+      - name: Load CI Environment from .ci_env
         id: load_ci_env
         uses: c-py/action-dotenv-to-setenv@v2
         with:
@@ -132,7 +132,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Load CI Environemnt from .ci_env
+      - name: Load CI Environment from .ci_env
         id: load_ci_env
         uses: c-py/action-dotenv-to-setenv@v2
         with:
@@ -140,8 +140,8 @@ jobs:
 
       - id: docker_login
         name: Docker Login
-        # only run docker login if this is not a fork
-        if: github.event.pull_request.head.repo.full_name == github.repository
+        # only run docker login on pushes; also for PRs, but only if this is not a fork
+        if: (github.event_name == 'push') || (github.event.pull_request.head.repo.full_name == github.repository)
         # note: GH does not allow to access secrets for PRs from a forked repositories due to security reasons
         # that's fine, but it means we can't push images to dockerhub
         env:
@@ -164,9 +164,12 @@ jobs:
           cat docker_build_report.txt >> docker_build_report_final.txt || echo "* No images have been built or uploaded" >> docker_build_report_final.txt
           echo "---"
           cat docker_build_report_final.txt
+
       - id: report_docker_build_to_pr
+        # Comment the docker build report to the PR
+        # This only works for PRs coming from inside of the repo, not from forks
         name: Report Docker Build to PR
-        if: github.event_name == 'pull_request'
+        if: (github.event_name == 'pull_request') && (github.event.pull_request.head.repo.full_name == github.repository)
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
