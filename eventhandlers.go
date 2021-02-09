@@ -87,26 +87,6 @@ func HandleRemediationTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloud
 	return nil
 }
 
-// sendGetSliFinishedCloudEvent is a helper function to send a get-sli.finished event
-// ToDo: This will need to be refactored once https://github.com/keptn/keptn/issues/2913 is ready
-func sendGetSliFinishedCloudEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.GetSLITriggeredEventData,
-	status keptnv2.StatusType, result keptnv2.ResultType, message string) error {
-	log.Printf("Sending getSli Finished Cloud Event with status=%s and result=%s back to Keptn (%s)", status, result, message)
-	getSliFinishedEventData := keptnv2.GetSLIFinishedEventData{}
-
-	getSliFinishedEventData.EventData = data.EventData
-	getSliFinishedEventData.Status = status
-	getSliFinishedEventData.Result = result
-	getSliFinishedEventData.Message = message
-
-	// Convert To CloudEvent
-	finishedEvent := cloudevents.NewEvent()
-	finishedEvent.SetType(keptnv2.GetFinishedEventType(keptnv2.GetSLITaskName))
-	finishedEvent.SetData(cloudevents.ApplicationJSON, getSliFinishedEventData)
-
-	return SendEvent(myKeptn, finishedEvent, incomingEvent)
-}
-
 // HandleGetSliTriggeredEvent handles get-sli.triggered events if SLIProvider == keptn-service-template-go
 // This function acts as an example showing how to handle get-sli events by sending .started and .finished events
 // TODO: adapt handler code to your needs
@@ -121,21 +101,14 @@ func HandleGetSliTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevent
 	}
 
 	// Step 2 - Send out a get-sli.started CloudEvent
-	// The get-sli.started cloud-event is new since Keptn 0.8.0 and is required for the task to start
-	// ToDo: This will need to be refactored once https://github.com/keptn/keptn/issues/2913 is ready
-	getSliStartedData := keptnv2.GetSLIStartedEventData{}
+	// The get-sli.started cloud-event is new since Keptn 0.8.0 and is required to be send when the task is started
+	_, err := myKeptn.SendTaskStartedEvent(data, ServiceName)
 
-	getSliStartedData.EventData = data.EventData
-	getSliStartedData.Status = keptnv2.StatusSucceeded // alternative: keptnv2.StatusErrored
-	getSliStartedData.Result = keptnv2.ResultPass      // alternative: keptnv2.ResultFailed
-
-	// Convert To CloudEvent
-	startedEvent := cloudevents.NewEvent()
-	startedEvent.SetType(keptnv2.GetStartedEventType(keptnv2.GetSLITaskName))
-	startedEvent.SetData(cloudevents.ApplicationJSON, getSliStartedData)
-
-	// send action.started event
-	SendEvent(myKeptn, startedEvent, incomingEvent)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to send task started CloudEvent (%s), aborting...", err.Error())
+		log.Println(errMsg)
+		return err
+	}
 
 	// Step 4 - prep-work
 	// Get any additional input / configuration data
@@ -160,7 +133,13 @@ func HandleGetSliTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevent
 		errMsg := fmt.Sprintf("Failed to fetch SLI file %s from config repo: %s", sliFile, err.Error())
 		log.Println(errMsg)
 		// send a get-sli.finished event with status=error and result=failed back to Keptn
-		return sendGetSliFinishedCloudEvent(myKeptn, incomingEvent, data, keptnv2.StatusErrored, keptnv2.ResultFailed, errMsg)
+
+		_, err = myKeptn.SendTaskFinishedEvent(&keptnv2.EventData{
+			Status: keptnv2.StatusErrored,
+			Result: keptnv2.ResultFailed,
+		}, ServiceName)
+
+		return err
 	}
 
 	fmt.Println(sliConfigFileContent)
@@ -183,13 +162,8 @@ func HandleGetSliTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevent
 	labels["Link to Data Source"] = "https://mydatasource/myquery?testRun=" + testRunID
 
 	// Step 8 - Build get-sli.finished event data
-	// ToDo: This will need to be refactored once https://github.com/keptn/keptn/issues/2913 is ready
-	getSliFinishedEventData := keptnv2.GetSLIFinishedEventData{
+	getSliFinishedEventData := &keptnv2.GetSLIFinishedEventData{
 		EventData: keptnv2.EventData{
-			Project: data.Project,
-			Stage:   data.Stage,
-			Service: data.Service,
-			Labels:  labels,
 			Status:  keptnv2.StatusSucceeded,
 			Result:  keptnv2.ResultPass,
 		},
@@ -200,13 +174,15 @@ func HandleGetSliTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevent
 		},
 	}
 
-	// Step 9 - Convert To CloudEvent
-	finishedEvent := cloudevents.NewEvent()
-	finishedEvent.SetType(keptnv2.GetFinishedEventType(keptnv2.GetSLITaskName))
-	finishedEvent.SetData(cloudevents.ApplicationJSON, getSliFinishedEventData)
+	_, err = myKeptn.SendTaskFinishedEvent(getSliFinishedEventData, ServiceName)
 
-	// Step 10 - send action.finished CloudEvent back to Keptn
-	return SendEvent(myKeptn, finishedEvent, incomingEvent)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to send task finished CloudEvent (%s), aborting...", err.Error())
+		log.Println(errMsg)
+		return err
+	}
+
+	return nil
 }
 
 // HandleProblemEvent handles two problem events:
@@ -232,21 +208,7 @@ func HandleActionTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevent
 		// -----------------------------------------------------
 		// 1. Send Action.Started Cloud-Event
 		// -----------------------------------------------------
-
-		// generate an action.started event
-		actionStartedData := keptnv2.ActionStartedEventData{}
-
-		actionStartedData.EventData = data.EventData
-		actionStartedData.Status = keptnv2.StatusSucceeded // alternative: keptnv2.StatusErrored
-		actionStartedData.Result = keptnv2.ResultPass      // alternative: keptnv2.ResultFailed
-
-		// Convert To CloudEvent
-		startedEvent := cloudevents.NewEvent()
-		startedEvent.SetType(keptnv2.GetStartedEventType(keptnv2.ActionTaskName))
-		startedEvent.SetData(cloudevents.ApplicationJSON, actionStartedData)
-
-		// send action.started event
-		SendEvent(myKeptn, startedEvent, incomingEvent)
+		myKeptn.SendTaskStartedEvent(data, ServiceName)
 
 		// -----------------------------------------------------
 		// 2. Implement your remediation action here
@@ -256,22 +218,11 @@ func HandleActionTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevent
 		// -----------------------------------------------------
 		// 3. Send Action.Finished Cloud-Event
 		// -----------------------------------------------------
-
-		// generate an action.finished event
-		actionFinishedData := keptnv2.ActionFinishedEventData{}
-
-		actionFinishedData.EventData = data.EventData
-		actionFinishedData.Status = keptnv2.StatusSucceeded // alternative: keptnv2.StatusErrored
-		actionFinishedData.Result = keptnv2.ResultPass      // alternative: keptnv2.ResultFailed
-		actionFinishedData.Message = "Successfully sleeped!"
-
-		// Convert To CloudEvent
-		finishedEvent := cloudevents.NewEvent()
-		finishedEvent.SetType(keptnv2.GetFinishedEventType(keptnv2.ActionTaskName))
-		finishedEvent.SetData(cloudevents.ApplicationJSON, actionFinishedData)
-
-		// send action.finished event
-		SendEvent(myKeptn, finishedEvent, incomingEvent)
+		myKeptn.SendTaskFinishedEvent(&keptnv2.EventData{
+			Status: keptnv2.StatusSucceeded, // alternative: keptnv2.StatusErrored
+			Result: keptnv2.ResultPass, // alternative: keptnv2.ResultFailed
+			Message: "Successfully sleeped!",
+		}, ServiceName)
 
 	} else {
 		log.Printf("Retrieved unknown action %s, skipping...", data.Action.Action)

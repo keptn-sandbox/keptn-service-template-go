@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/keptn/go-utils/pkg/lib/v0_2_0/fake"
 	"io/ioutil"
 	"testing"
 
@@ -28,7 +29,10 @@ func initializeTestObjects(eventFileName string) (*keptnv2.Keptn, *cloudevents.E
 		return nil, nil, fmt.Errorf("Error parsing: %s", err.Error())
 	}
 
-	var keptnOptions = keptn.KeptnOpts{}
+	// Add a Fake EventSender to KeptnOptions
+	var keptnOptions = keptn.KeptnOpts{
+		EventSender: &fake.EventSender{},
+	}
 	keptnOptions.UseLocalFileSystem = true
 	myKeptn, err := keptnv2.NewKeptn(incomingEvent, keptnOptions)
 
@@ -53,6 +57,23 @@ func TestHandleActionTriggeredEvent(t *testing.T) {
 	err = HandleActionTriggeredEvent(myKeptn, *incomingEvent, specificEvent)
 	if err != nil {
 		t.Errorf("Error: " + err.Error())
+	}
+
+	gotEvents := len(myKeptn.EventSender.(*fake.EventSender).SentEvents)
+
+	// Verify that HandleGetSliTriggeredEvent has sent 2 cloudevents
+	if gotEvents != 2 {
+		t.Errorf("Expected two events to be sent, but got %v", gotEvents)
+	}
+
+	// Verify that the first CE sent is a .started event
+	if keptnv2.GetStartedEventType(keptnv2.ActionTaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[0].Type() {
+		t.Errorf("Expected a get-sli.started event type")
+	}
+
+	// Verify that the second CE sent is a .finished event
+	if keptnv2.GetFinishedEventType(keptnv2.ActionTaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[1].Type() {
+		t.Errorf("Expected a get-sli.finished event type")
 	}
 }
 
@@ -116,6 +137,23 @@ func TestHandleGetSliTriggered(t *testing.T) {
 	err = HandleGetSliTriggeredEvent(myKeptn, *incomingEvent, specificEvent)
 	if err != nil {
 		t.Errorf("Error: " + err.Error())
+	}
+
+	gotEvents := len(myKeptn.EventSender.(*fake.EventSender).SentEvents)
+
+	// Verify that HandleGetSliTriggeredEvent has sent 2 cloudevents
+	if gotEvents != 2 {
+		t.Errorf("Expected two events to be sent, but got %v", gotEvents)
+	}
+
+	// Verify that the first CE sent is a .started event
+	if keptnv2.GetStartedEventType(keptnv2.GetSLITaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[0].Type() {
+		t.Errorf("Expected a get-sli.started event type")
+	}
+
+	// Verify that the second CE sent is a .finished event
+	if keptnv2.GetFinishedEventType(keptnv2.GetSLITaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[1].Type() {
+		t.Errorf("Expected a get-sli.finished event type")
 	}
 }
 

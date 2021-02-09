@@ -8,7 +8,6 @@ import (
 	"os"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2" // make sure to use v2 cloudevents here
-	"github.com/google/uuid"
 	"github.com/kelseyhightower/envconfig"
 	keptnlib "github.com/keptn/go-utils/pkg/lib"
 	keptn "github.com/keptn/go-utils/pkg/lib/keptn"
@@ -30,44 +29,6 @@ type envConfig struct {
 
 // ServiceName specifies the current services name (e.g., used as source when sending CloudEvents)
 const ServiceName = "keptn-service-template-go"
-
-// SendEvent sends a cloud event
-// ToDo: Once https://github.com/keptn/keptn/issues/2911 is resolved, we can refactor this function
-func SendEvent(myKeptn *keptnv2.Keptn, event cloudevents.Event, incomingEvent cloudevents.Event) error {
-	log.Printf("Sending CloudEvent back to Keptn: %s %s", event.Type(), event.Context.GetID())
-	// set source of CloudEvent
-	event.SetSource(ServiceName)
-	event.SetDataContentType(cloudevents.ApplicationJSON)
-
-	event.SetID(uuid.New().String())
-
-	// set keptn context
-	event.SetExtension("shkeptncontext", myKeptn.KeptnContext)
-
-	// set triggered id to event id of incoming event
-	event.SetExtension("triggeredid", incomingEvent.Context.GetID())
-
-	err := event.Validate()
-
-	if err != nil {
-		log.Printf("CloudEvent Validation Failed: %s", err)
-		return err
-	}
-
-	// Print CE
-	log.Printf("%v", event)
-
-	err = myKeptn.SendCloudEvent(event)
-
-	if err != nil {
-		log.Fatalf("Failed to send CloudEvent: %s", err.Error())
-		return err
-	}
-
-	log.Printf("Keptn CloudEvent sent!")
-
-	return nil
-}
 
 /**
  * Parses a Keptn Cloud Event payload (data attribute)
