@@ -68,12 +68,12 @@ func TestHandleActionTriggeredEvent(t *testing.T) {
 
 	// Verify that the first CE sent is a .started event
 	if keptnv2.GetStartedEventType(keptnv2.ActionTaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[0].Type() {
-		t.Errorf("Expected a get-sli.started event type")
+		t.Errorf("Expected a action.started event type")
 	}
 
 	// Verify that the second CE sent is a .finished event
 	if keptnv2.GetFinishedEventType(keptnv2.ActionTaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[1].Type() {
-		t.Errorf("Expected a get-sli.finished event type")
+		t.Errorf("Expected a action.finished event type")
 	}
 }
 
