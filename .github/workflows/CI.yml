@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - 'master'
+      - 'main'
       - 'release-*'
   # in addition, execute for pull requests to those branches
   pull_request:
     branches:
       - 'master'
+      - 'main'
       - 'release-*'
 defaults:
   run:
