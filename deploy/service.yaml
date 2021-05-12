@@ -24,7 +24,7 @@ spec:
             - name: CONFIGURATION_SERVICE
               value: 'http://configuration-service:8080'
         - name: distributor
-          image: keptn/distributor:0.8.0-alpha
+          image: keptn/distributor:0.8.2
           livenessProbe:
             httpGet:
               path: /health
