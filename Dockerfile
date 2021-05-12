@@ -1,7 +1,7 @@
 # Use the offical Golang image to create a build artifact.
 # This is based on Debian and sets the GOPATH to /go.
 # https://hub.docker.com/_/golang
-FROM golang:1.13.7-alpine as builder
+FROM golang:1.16.2-alpine as builder
 
 RUN apk add --no-cache gcc libc-dev git
 
@@ -36,7 +36,7 @@ RUN GOOS=linux go build -ldflags '-linkmode=external' $BUILDFLAGS -v -o keptn-se
 
 # Use a Docker multi-stage build to create a lean production image.
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM alpine:3.11
+FROM alpine:3.13
 ENV ENV=production
 
 # Install extra packages
