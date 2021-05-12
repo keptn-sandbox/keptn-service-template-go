@@ -1,6 +1,6 @@
 module example.com/keptn-service-template-go
 
-go 1.13
+go 1.16
 
 require (
 	github.com/cloudevents/sdk-go/v2 v2.3.1
