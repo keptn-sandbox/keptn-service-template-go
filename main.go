@@ -63,55 +63,39 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 	}
 
 	/**
-		* CloudEvents types in Keptn 0.8.0 follow the following pattern:
-		* - sh.keptn.event.${EVENTNAME}.triggered
-		* - sh.keptn.event.${EVENTNAME}.started
-		* - sh.keptn.event.${EVENTNAME}.status.changed
-		* - sh.keptn.event.${EVENTNAME}.finished
-		*
-		* For convenience, types can be generated using the following methods:
-		* - triggered:      keptnv2.GetTriggeredEventType(${EVENTNAME}) (e.g,. keptnv2.GetTriggeredEventType(keptnv2.DeploymentTaskName))
-		* - started:        keptnv2.GetStartedEventType(${EVENTNAME}) (e.g,. keptnv2.GetStartedEventType(keptnv2.DeploymentTaskName))
-		* - status.changed: keptnv2.GetStatusChangedEventType(${EVENTNAME}) (e.g,. keptnv2.GetStatusChangedEventType(keptnv2.DeploymentTaskName))
-		* - finished:       keptnv2.GetFinishedEventType(${EVENTNAME}) (e.g,. keptnv2.GetFinishedEventType(keptnv2.DeploymentTaskName))
-		*
-		* The following Cloud Events are reserved and specified in the Keptn spec:
-		* - approval
-		* - deployment
-		* - test
-		* - evaluation
-		* - release
-		* - remediation
-		* - action
-		* - get-sli (for quality-gate SLI providers)
-		* - problem / problem.open (both deprecated, use action or remediation instead)
-
-		* There are more "internal" Cloud Events that might not have all four status, e.g.:
-	    * - project
-		* - project.create
-		* - service
-		* - service.create
-		* - configure-monitoring
-		*
-		* For those Cloud Events the keptn/go-utils library conveniently provides several data structures
-		* and strings in github.com/keptn/go-utils/pkg/lib/v0_2_0, e.g.:
-		* - deployment: DeploymentTaskName, DeploymentTriggeredEventData, DeploymentStartedEventData, DeploymentFinishedEventData
-		* - test: TestTaskName, TestTriggeredEventData, TestStartedEventData, TestFinishedEventData
-		* - ... (they all follow the same pattern)
-		*
-		*
-		* In most cases you will be interested in processing .triggered events (e.g., sh.keptn.event.deployment.triggered),
-		* which you an achieve as follows:
-		* if event.type() == keptnv2.GetTriggeredEventType(keptnv2.DeploymentTaskName) { ... }
-		*
-		* Processing the event payload can be achieved as follows:
-		*
-		* eventData := &keptnv2.DeploymentTriggeredEventData{}
-		* parseKeptnCloudEventPayload(event, eventData)
-		*
-		* See https://github.com/keptn/spec/blob/0.2.0-alpha/cloudevents.md for more details of Keptn Cloud Events and their payload
-		* Also, see https://github.com/keptn-sandbox/echo-service/blob/a90207bc119c0aca18368985c7bb80dea47309e9/pkg/events.go as an example how to create your own CloudEvents
-		**/
+	* CloudEvents types in Keptn 0.8.0 follow the following pattern:
+	* - sh.keptn.event.${EVENTNAME}.triggered
+	* - sh.keptn.event.${EVENTNAME}.started
+	* - sh.keptn.event.${EVENTNAME}.status.changed
+	* - sh.keptn.event.${EVENTNAME}.finished
+	*
+	* For convenience, types can be generated using the following methods:
+	* - triggered:      keptnv2.GetTriggeredEventType(${EVENTNAME}) (e.g,. keptnv2.GetTriggeredEventType(keptnv2.DeploymentTaskName))
+	* - started:        keptnv2.GetStartedEventType(${EVENTNAME}) (e.g,. keptnv2.GetStartedEventType(keptnv2.DeploymentTaskName))
+	* - status.changed: keptnv2.GetStatusChangedEventType(${EVENTNAME}) (e.g,. keptnv2.GetStatusChangedEventType(keptnv2.DeploymentTaskName))
+	* - finished:       keptnv2.GetFinishedEventType(${EVENTNAME}) (e.g,. keptnv2.GetFinishedEventType(keptnv2.DeploymentTaskName))
+	*
+	* Keptn reserves some Cloud Event types, please read up on that here: https://keptn.sh/docs/0.8.x/manage/shipyard/
+	*
+	* For those Cloud Events the keptn/go-utils library conveniently provides several data structures
+	* and strings in github.com/keptn/go-utils/pkg/lib/v0_2_0, e.g.:
+	* - deployment: DeploymentTaskName, DeploymentTriggeredEventData, DeploymentStartedEventData, DeploymentFinishedEventData
+	* - test: TestTaskName, TestTriggeredEventData, TestStartedEventData, TestFinishedEventData
+	* - ... (they all follow the same pattern)
+	*
+	*
+	* In most cases you will be interested in processing .triggered events (e.g., sh.keptn.event.deployment.triggered),
+	* which you an achieve as follows:
+	* if event.type() == keptnv2.GetTriggeredEventType(keptnv2.DeploymentTaskName) { ... }
+	*
+	* Processing the event payload can be achieved as follows:
+	*
+	* eventData := &keptnv2.DeploymentTriggeredEventData{}
+	* parseKeptnCloudEventPayload(event, eventData)
+	*
+	* See https://github.com/keptn/spec/blob/0.2.0-alpha/cloudevents.md for more details of Keptn Cloud Events and their payload
+	* Also, see https://github.com/keptn-sandbox/echo-service/blob/a90207bc119c0aca18368985c7bb80dea47309e9/pkg/events.go as an example how to create your own CloudEvents
+	**/
 
 	/**
 	* The following code presents a very generic implementation of processing almost all possible
@@ -326,47 +310,38 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		return GenericLogKeptnCloudEventHandler(myKeptn, event, eventData)
 
 	// -------------------------------------------------------
-	// sh.keptn.event.remediation
-	case keptnv2.GetTriggeredEventType(keptnv2.RemediationTaskName): // sh.keptn.event.remediation.triggered
-		log.Printf("Processing Remediation.Triggered Event")
+	// sh.keptn.event.get-action (sent by shipyard-controller to extract a remediation action from remediations.yaml)
+	case keptnv2.GetTriggeredEventType(keptnv2.GetActionTaskName): // sh.keptn.event.action.triggered
+		log.Printf("Processing Get-Action.Triggered Event")
 
-		eventData := &keptnv2.RemediationTriggeredEventData{}
-		parseKeptnCloudEventPayload(event, eventData)
-
-		return HandleRemediationTriggeredEvent(myKeptn, event, eventData)
-	case keptnv2.GetStartedEventType(keptnv2.RemediationTaskName): // sh.keptn.event.remediation.started
-		log.Printf("Processing Remediation.Started Event")
-		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
-		// notify an external service (e.g., for logging purposes).
-
-		eventData := &keptnv2.RemediationStartedEventData{}
+		eventData := &keptnv2.GetActionTriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
 		// Just log this event
 		return GenericLogKeptnCloudEventHandler(myKeptn, event, eventData)
-	case keptnv2.GetStatusChangedEventType(keptnv2.RemediationTaskName): // sh.keptn.event.remediation.status.changed
-		log.Printf("Processing Remediation.Status.Changed Event")
+	case keptnv2.GetStartedEventType(keptnv2.GetActionTaskName): // sh.keptn.event.action.started
+		log.Printf("Processing Get-Action.Started Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
 		// notify an external service (e.g., for logging purposes).
 
-		eventData := &keptnv2.RemediationStatusChangedEventData{}
+		eventData := &keptnv2.GetActionStartedEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
 		// Just log this event
 		return GenericLogKeptnCloudEventHandler(myKeptn, event, eventData)
-	case keptnv2.GetFinishedEventType(keptnv2.RemediationTaskName): // sh.keptn.event.remediation.finished
-		log.Printf("Processing Remediation.Finished Event")
+	case keptnv2.GetFinishedEventType(keptnv2.GetActionTaskName): // sh.keptn.event.action.finished
+		log.Printf("Processing Get-Action.Finished Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
 		// notify an external service (e.g., for logging purposes).
 
-		eventData := &keptnv2.RemediationFinishedEventData{}
+		eventData := &keptnv2.GetActionFinishedEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
 		// Just log this event
 		return GenericLogKeptnCloudEventHandler(myKeptn, event, eventData)
 
 	// -------------------------------------------------------
-	// sh.keptn.event.action
+	// sh.keptn.event.action (sent by shipyard-controller to execute a remediation action)
 	case keptnv2.GetTriggeredEventType(keptnv2.ActionTaskName): // sh.keptn.event.action.triggered
 		log.Printf("Processing Action.Triggered Event")
 
@@ -406,17 +381,9 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		parseKeptnCloudEventPayload(event, eventData)
 
 		return HandleProblemEvent(myKeptn, event, eventData)
-	case keptnlib.ProblemOpenEventType: // sh.keptn.event.problem.open - e.g., sent by dynatrace-service
-		log.Printf("Processing problem.open Event")
-		log.Printf("Subscribing to a problem.open or problem event is not recommended since Keptn 0.7. Please subscribe to event of type: sh.keptn.event.action.triggered")
-
-		eventData := &keptnlib.ProblemEventData{}
-		parseKeptnCloudEventPayload(event, eventData)
-
-		return HandleProblemEvent(myKeptn, event, eventData)
 
 	// -------------------------------------------------------
-	// sh.keptn.event.get-sli
+	// sh.keptn.event.get-sli (sent by lighthouse-service to fetch SLIs from the sli provider)
 	case keptnv2.GetTriggeredEventType(keptnv2.GetSLITaskName): // sh.keptn.event.get-sli.triggered
 		log.Printf("Processing Get-SLI.Triggered Event")
 
