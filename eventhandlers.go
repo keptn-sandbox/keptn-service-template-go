@@ -79,14 +79,6 @@ func HandleReleaseTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudeven
 	return nil
 }
 
-// HandleRemediationTriggeredEvent handles remediation.triggered events
-// TODO: add in your handler code
-func HandleRemediationTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.RemediationTriggeredEventData) error {
-	log.Printf("Handling remediation.triggered Event: %s", incomingEvent.Context.GetID())
-
-	return nil
-}
-
 // HandleGetSliTriggeredEvent handles get-sli.triggered events if SLIProvider == keptn-service-template-go
 // This function acts as an example showing how to handle get-sli events by sending .started and .finished events
 // TODO: adapt handler code to your needs
@@ -164,8 +156,8 @@ func HandleGetSliTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevent
 	// Step 8 - Build get-sli.finished event data
 	getSliFinishedEventData := &keptnv2.GetSLIFinishedEventData{
 		EventData: keptnv2.EventData{
-			Status:  keptnv2.StatusSucceeded,
-			Result:  keptnv2.ResultPass,
+			Status: keptnv2.StatusSucceeded,
+			Result: keptnv2.ResultPass,
 		},
 		GetSLI: keptnv2.GetSLIFinished{
 			IndicatorValues: sliResults,
@@ -219,8 +211,8 @@ func HandleActionTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevent
 		// 3. Send Action.Finished Cloud-Event
 		// -----------------------------------------------------
 		myKeptn.SendTaskFinishedEvent(&keptnv2.EventData{
-			Status: keptnv2.StatusSucceeded, // alternative: keptnv2.StatusErrored
-			Result: keptnv2.ResultPass, // alternative: keptnv2.ResultFailed
+			Status:  keptnv2.StatusSucceeded, // alternative: keptnv2.StatusErrored
+			Result:  keptnv2.ResultPass,      // alternative: keptnv2.ResultFailed
 			Message: "Successfully sleeped!",
 		}, ServiceName)
 
