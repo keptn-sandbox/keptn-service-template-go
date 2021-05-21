@@ -1,6 +1,6 @@
 # README
 
-This is a Keptn Service Template written in GoLang. 
+This is a Keptn Service Template written in GoLang. Follow the instructions below for writing your own Keptn integration.
 
 Quick start:
 
