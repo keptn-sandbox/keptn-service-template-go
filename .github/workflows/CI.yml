@@ -174,7 +174,7 @@ jobs:
         # This only works for PRs coming from inside of the repo, not from forks
         name: Report Docker Build to PR
         if: (github.event_name == 'pull_request') && (github.event.pull_request.head.repo.full_name == github.repository)
-        uses: marocchino/sticky-pull-request-comment@v2.1.0
+        uses: marocchino/sticky-pull-request-comment@v2.2.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           path: docker_build_report_final.txt
