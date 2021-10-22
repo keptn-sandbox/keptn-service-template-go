@@ -5,6 +5,12 @@ kind: Deployment
 metadata:
   name: keptn-service-template-go
   namespace: keptn
+  labels:
+    app.kubernetes.io/name: keptn-service-template-go
+    app.kubernetes.io/instance: keptn
+    app.kubernetes.io/part-of: keptn-keptn
+    app.kubernetes.io/component: control-plane
+    app.kubernetes.io/version: develop
 spec:
   selector:
     matchLabels:
@@ -14,6 +20,11 @@ spec:
     metadata:
       labels:
         run: keptn-service-template-go
+        app.kubernetes.io/name: keptn-service-template-go
+        app.kubernetes.io/instance: keptn
+        app.kubernetes.io/part-of: keptn-keptn
+        app.kubernetes.io/component: control-plane
+        app.kubernetes.io/version: develop
     spec:
       containers:
         - name: keptn-service-template-go
@@ -26,6 +37,12 @@ spec:
         - name: distributor
           image: keptn/distributor:0.10.0-next.2
           livenessProbe:
+            httpGet:
+              path: /health
+              port: 10999
+            initialDelaySeconds: 0
+            periodSeconds: 5
+          readinessProbe:
             httpGet:
               path: /health
               port: 10999
@@ -48,6 +65,31 @@ spec:
               value: 'sh.keptn.>'
             - name: PUBSUB_RECIPIENT
               value: '127.0.0.1'
+            - name: VERSION
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: 'metadata.labels[''app.kubernetes.io/version'']'
+            - name: K8S_DEPLOYMENT_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: 'metadata.labels[''app.kubernetes.io/name'']'
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
       serviceAccountName: keptn-default
 ---
 # Expose keptn-service-template-go via Port 8080 within the cluster
