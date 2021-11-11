@@ -1,5 +1,14 @@
 # README
 
+**BEFORE YOU START**, please be aware that there are more ways to integrate with your service that don't require creating a service from this template, see https://keptn.sh/docs/0.10.x/integrations/how_integrate/ for more details.
+
+Examples:
+
+* Webhooks: https://keptn.sh/docs/0.10.x/integrations/webhooks/
+* Job-Executor-Service: https://github.com/keptn-sandbox/job-executor-service
+
+---
+
 This is a Keptn Service Template written in GoLang. Follow the instructions below for writing your own Keptn integration.
 
 Quick start:
