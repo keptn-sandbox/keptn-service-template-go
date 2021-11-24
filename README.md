@@ -20,7 +20,7 @@ Quick start:
 1. Optional (but recommended): Create a git repo (e.g., on `github.com/your-username/simple-service`)
 1. Àdapt the [go.mod](go.mod) file and change `example.com/` to the actual package name (e.g., `github.com/your-username/simple-service`)
 1. Add yourself to the [CODEOWNERS](CODEOWNERS) file
-1. Initialize a git repository: 
+1. Initialize a git repository (you can skip this step if you have created your service by clicking on the `Use this template` button): 
   * `git init .`
   * `git add .`
   * `git commit -m "Initial Commit"`
