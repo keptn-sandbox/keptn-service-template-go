@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "config:base",
+    ":gitSignOff",
+    ":semanticCommitTypeAll(build)",
+    ":semanticCommitScope(deps)",
+    "group:monorepos"
+  ],
+  "addLabels": ["dependencies"],
+  "cloneSubmodules": true,
+  "stabilityDays": 7,
+  "timezone": "Europe/Vienna"
+}
