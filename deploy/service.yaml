@@ -36,18 +36,6 @@ spec:
               value: 'http://configuration-service:8080'
         - name: distributor
           image: keptn/distributor:0.11.2
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 10999
-            initialDelaySeconds: 0
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 10999
-            initialDelaySeconds: 5
-            periodSeconds: 5
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
