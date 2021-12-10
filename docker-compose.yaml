@@ -11,7 +11,7 @@ services:
     environment:
       - CONFIGURATION_SERVICE=http://configuration-service:8080
   distributor:
-    image: 'keptn/distributor:0.11.2'
+    image: 'keptn/distributor:0.11.3'
     container_name: 'keptn-distributor'
     ports:
       - '8080'
