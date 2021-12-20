@@ -137,7 +137,7 @@ You can find the details in [.github/workflows/reviewdog.yml](.github/workflows/
 
 This repo has automated unit tests for pull requests. 
 
-You can find the details in [.github/workflows/tests.yml](.github/workflows/tests.yml).
+You can find the details in [.github/workflows/CI.yml](.github/workflows/CI.yml).
 
 ### GH Actions/Workflow: Build Docker Images
 
