@@ -18,7 +18,7 @@ Quick start:
 1. Replace every occurrence of (docker) image names and tags from `keptnsandbox/keptn-service-template-go` to your docker organization and image name (e.g., `yourorganization/simple-service`)
 1. Replace every occurrence of `keptn-service-template-go` with the name of your service (e.g., `simple-service`)
 1. Optional (but recommended): Create a git repo (e.g., on `github.com/your-username/simple-service`)
-1. Àdapt the [go.mod](go.mod) file and change `example.com/` to the actual package name (e.g., `github.com/your-username/simple-service`)
+1. Adapt the [go.mod](go.mod) file and change `example.com/` to the actual package name (e.g., `github.com/your-username/simple-service`)
 1. Add yourself to the [CODEOWNERS](CODEOWNERS) file
 1. Initialize a git repository (you can skip this step if you have created your service by clicking on the `Use this template` button): 
   * `git init .`
@@ -52,10 +52,11 @@ The *keptn-service-template-go* can be installed as a part of [Keptn's uniform](
 
 ### Deploy in your Kubernetes cluster
 
-To deploy the current version of the *keptn-service-template-go* in your Keptn Kubernetes cluster, apply the [`deploy/service.yaml`](deploy/service.yaml) file:
+To deploy the current version of the *keptn-service-template-go* in your Keptn Kubernetes cluster use the [`helm chart`](chart/Chart.yaml) file,
+for example:
 
 ```console
-kubectl apply -f deploy/service.yaml
+helm install -n keptn keptn-service-template-go chart/
 ```
 
 This should install the `keptn-service-template-go` together with a Keptn `distributor` into the `keptn` namespace, which you can verify using
@@ -70,7 +71,7 @@ kubectl -n keptn get pods -l run=keptn-service-template-go
 Adapt and use the following command in case you want to up- or downgrade your installed version (specified by the `$VERSION` placeholder):
 
 ```console
-kubectl -n keptn set image deployment/keptn-service-template-go keptn-service-template-go=keptnsandbox/keptn-service-template-go:$VERSION --record
+helm upgrade -n keptn --set image.tag=$VERSION keptn-service-template-go chart/
 ```
 
 ### Uninstall
@@ -78,7 +79,7 @@ kubectl -n keptn set image deployment/keptn-service-template-go keptn-service-te
 To delete a deployed *keptn-service-template-go*, use the file `deploy/*.yaml` files from this repository and delete the Kubernetes resources:
 
 ```console
-kubectl delete -f deploy/service.yaml
+helm uninstall -n keptn keptn-service-template-go
 ```
 
 ## Development
