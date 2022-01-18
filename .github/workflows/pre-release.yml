@@ -1,0 +1,68 @@
+name: Create Pre-Release
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Unit tests
+        uses: ./.github/actions/unit-tests
+
+  pre-release:
+    needs: test
+    name: Pre-Release
+    uses: keptn/gh-automation/.github/workflows/pre-release-integration.yml@v1.4.0
+
+  docker_build:
+    needs: [pre-release]
+    name: Docker Build
+    runs-on: ubuntu-20.04
+    env:
+      VERSION: ${{ needs.pre-release.outputs.RELEASE_TAG }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2.4.0
+
+      - name: Load CI Environment from .ci_env
+        id: load_ci_env
+        uses: c-py/action-dotenv-to-setenv@v3
+        with:
+          env-file: .ci_env
+
+      - name: Docker Build
+        uses: keptn/gh-automation/.github/actions/docker-build@v1.4.0
+        with:
+          TAGS: |
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE }}:${{ env.VERSION }}
+          BUILD_ARGS: |
+            version=${{ env.VERSION }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  helm_chart_build:
+    needs: [pre-release, docker_build]
+    name: Build Helm Charts
+    runs-on: ubuntu-20.04
+    env:
+      VERSION: ${{ needs.pre-release.outputs.RELEASE_TAG }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2.4.0
+
+      - name: Load CI Environment from .ci_env
+        id: load_ci_env
+        uses: c-py/action-dotenv-to-setenv@v3
+        with:
+          env-file: .ci_env
+
+      - name: Build Helm Charts
+        id: build_helm_charts
+        run: ./gh-actions-scripts/build_helm_chart.sh "${VERSION}" "${VERSION}" "${IMAGE}"
+
+      - name: Upload Helm Chart as release asset
+        env:
+          RELEASE_TAG: ${{ needs.pre-release.outputs.RELEASE_TAG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "$RELEASE_TAG" installer/*.tgz

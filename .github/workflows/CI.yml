@@ -131,6 +131,7 @@ jobs:
         id: docker_build
         uses: keptn/gh-automation/.github/actions/docker-build@v1.3.0
         with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAGS: |
             ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE }}:${{ env.VERSION }}
           BUILD_ARGS: |
