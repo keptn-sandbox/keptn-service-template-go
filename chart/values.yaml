@@ -1,22 +1,22 @@
-keptnservice:
-  image:
-    repository: docker.io/keptnsandbox/keptn-service-template-go # Container Image Name
-    pullPolicy: Always                   # Kubernetes Image Pull Policy
-    tag: "dev"                                    # Container Tag
-  service:
-    enabled: true                              # Creates a Kubernetes Service for the keptn-service-template-go
+image:
+  repository: ghcr.io/keptnsandbox/keptn-service-template-go # Container Image Name
+  pullPolicy: IfNotPresent                   # Kubernetes Image Pull Policy
+  tag: ""                                    # Container Tag
+service:
+  enabled: true                              # Creates a Kubernetes Service for the keptn-service-template-go
 
 distributor:
   stageFilter: ""                            # Sets the stage this helm service belongs to
   serviceFilter: ""                          # Sets the service this helm service belongs to
   projectFilter: ""                          # Sets the project this helm service belongs to
+  pubsubTopic: "sh.keptn.>"                  # Sets the events the service subscribes to
   image:
     repository: docker.io/keptn/distributor  # Container Image Name
     pullPolicy: IfNotPresent                 # Kubernetes Image Pull Policy
     tag: ""                                  # Container Tag
 
 remoteControlPlane:
-  enabled: true                             # Enables remote execution plane mode
+  enabled: false                             # Enables remote execution plane mode
   api:
     protocol: "http"                        # Used Protocol (http, https)
     hostname: ""                            # Hostname of the control plane cluster (and Port)

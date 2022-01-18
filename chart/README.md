@@ -11,13 +11,14 @@ The following table lists the configurable parameters of the keptn-service-templ
 
 | Parameter                | Description             | Default        |
 | ------------------------ | ----------------------- | -------------- |
-| `keptnservice.image.repository` | Container image name | `"docker.io/keptnsandbox/keptn-service-template-go"` |
-| `keptnservice.image.pullPolicy` | Kubernetes image pull policy | `"IfNotPresent"` |
-| `keptnservice.image.tag` | Container tag | `""` |
-| `keptnservice.service.enabled` | Creates a kubernetes service for the keptn-service-template-go | `true` |
+| `image.repository` | Container image name | `"ghcr.io/keptnsandbox/keptn-service-template-go"` |
+| `image.pullPolicy` | Kubernetes image pull policy | `"IfNotPresent"` |
+| `image.tag` | Container tag | `""` |
+| `service.enabled` | Creates a kubernetes service for the keptn-service-template-go | `true` |
 | `distributor.stageFilter` | Sets the stage this helm service belongs to | `""` |
 | `distributor.serviceFilter` | Sets the service this helm service belongs to | `""` |
 | `distributor.projectFilter` | Sets the project this helm service belongs to | `""` |
+| `distributor.pubsubTopic` | Sets the events the service subscribes to. *NOTE: in case of remote control plane wildcards like "sh.keptn.>" don't work, please provide a comma-separated list of explicit events* | `"sh.keptn.>"` |
 | `distributor.image.repository` | Container image name | `"docker.io/keptn/distributor"` |
 | `distributor.image.pullPolicy` | Kubernetes image pull policy | `"IfNotPresent"` |
 | `distributor.image.tag` | Container tag | `""` |

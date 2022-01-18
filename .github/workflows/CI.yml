@@ -132,12 +132,9 @@ jobs:
         uses: keptn/gh-automation/.github/actions/docker-build@v1.3.0
         with:
           TAGS: |
-            ${{ env.DOCKER_ORGANIZATION }}/${{ env.IMAGE }}:${{ env.VERSION }}
-            ${{ env.DOCKER_ORGANIZATION }}/${{ env.IMAGE }}:${{ env.VERSION }}.${{ env.DATETIME }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE }}:${{ env.VERSION }}
           BUILD_ARGS: |
             version=${{ env.VERSION }}
-          REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           PUSH: ${{(github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository)}}
 
       - id: report_docker_build_to_pr

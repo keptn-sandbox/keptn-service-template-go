@@ -17,7 +17,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "keptn-service.selectorLabels" . | nindent 8 }}
+        {{- include "keptn-service.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -30,12 +30,8 @@ spec:
         - name: keptn-service
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- if .Values.image }}
-          image: {{ .Values.image }} # use image from .Values.image (e.g., when starting via skaffold)
-          {{- else }}
-          image: "{{ .Values.keptnservice.image.repository }}:{{ .Values.keptnservice.image.tag | default .Chart.AppVersion }}"
-          {{- end }}
-          imagePullPolicy: {{ .Values.keptnservice.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 80
           env:
@@ -69,7 +65,7 @@ spec:
               cpu: "500m"
           env:
             - name: PUBSUB_TOPIC
-              value: 'sh.keptn.event.test.triggered'
+              value: {{ .Values.distributor.pubsubTopic }}
             - name: PUBSUB_RECIPIENT
               value: '127.0.0.1'
             - name: STAGE_FILTER
@@ -78,6 +74,31 @@ spec:
               value: "{{ .Values.distributor.projectFilter }}"
             - name: SERVICE_FILTER
               value: "{{ .Values.distributor.serviceFilter }}"
+            - name: VERSION
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: 'metadata.labels[''app.kubernetes.io/version'']'
+            - name: K8S_DEPLOYMENT_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: 'metadata.labels[''app.kubernetes.io/name'']'
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
             {{- if .Values.remoteControlPlane.enabled }}
             - name: KEPTN_API_ENDPOINT
               value: "{{ .Values.remoteControlPlane.api.protocol }}://{{ .Values.remoteControlPlane.api.hostname }}/api"

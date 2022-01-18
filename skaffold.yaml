@@ -1,13 +1,30 @@
-apiVersion: skaffold/v1beta13
+apiVersion: skaffold/v2beta23
 kind: Config
 build:
+  local:
+    useBuildkit: true
   artifacts:
-    - image: keptnsandbox/keptn-service-template-go # Todo: Replace this with your image name
+    - image: ghcr.io/keptnsandbox/keptn-service-template-go # Todo: Replace this with your image name
       docker:
         dockerfile: Dockerfile
         buildArgs:
           debugBuild: true
 deploy:
-  kubectl:
-    manifests:
-      - deploy/service.yaml
+  helm:
+    flags:
+      upgrade: ["--reuse-values", "--install"]
+    releases:
+      - name: keptn-service-template-go
+        namespace: keptn
+        artifactOverrides:
+          image: ghcr.io/keptnsandbox/keptn-service-template-go # Todo: Replace this with your image name
+        imageStrategy:
+          helm: { }
+        overrides:
+          distributor:
+            image:
+              tag: 0.10.0
+          resources:
+            limits:
+              memory: 512Mi
+        chartPath: chart
