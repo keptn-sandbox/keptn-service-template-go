@@ -13,7 +13,7 @@ jobs:
   pre-release:
     needs: test
     name: Pre-Release
-    uses: keptn/gh-automation/.github/workflows/pre-release-integration.yml@v1.4.0
+    uses: keptn/gh-automation/.github/workflows/pre-release-integration.yml@v1.4.1
 
   docker_build:
     needs: [pre-release]
@@ -32,7 +32,7 @@ jobs:
           env-file: .ci_env
 
       - name: Docker Build
-        uses: keptn/gh-automation/.github/actions/docker-build@v1.4.0
+        uses: keptn/gh-automation/.github/actions/docker-build@v1.4.1
         with:
           TAGS: |
             ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE }}:${{ env.VERSION }}
