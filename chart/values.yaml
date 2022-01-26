@@ -13,7 +13,7 @@ distributor:
   image:
     repository: docker.io/keptn/distributor  # Container Image Name
     pullPolicy: IfNotPresent                 # Kubernetes Image Pull Policy
-    tag: ""                                  # Container Tag
+    tag: "0.11.4"                            # Container Tag
 
 remoteControlPlane:
   enabled: false                             # Enables remote execution plane mode
