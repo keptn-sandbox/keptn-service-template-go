@@ -1,0 +1,32 @@
+name: One-time repository initialization
+on:
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: "Override repository for docker image of the new keptn service, if blank it defaults to ghcr.io/<owner>/repository"
+        required: false
+        type: string
+        default: ${{ env.GITHUB_REPOSITORY }}
+jobs:
+  init_repo_job:
+    runs-on: ubuntu-latest
+    name: A job to initialize a repository freshly cloned from the template
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Update the image name in helm chart and skaffold
+        env:
+          ORIGINAL_IMAGE_NAME: ghcr.io/keptnsandbox/keptn-service-template-go
+          NEW_IMAGE_NAME: ${{ github.event.inputs.repository }}
+        run: |
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g') 
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" chart/values.yaml skaffold.yaml
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.7.1
+      - name: Dump rendered helm chart
+        run: helm template chart
