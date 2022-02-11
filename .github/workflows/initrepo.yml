@@ -2,31 +2,54 @@ name: One-time repository initialization
 on:
   workflow_dispatch:
     inputs:
-      repository:
-        description: "Override repository for docker image of the new keptn service, if blank it defaults to ghcr.io/<owner>/repository"
-        required: false
+      service-name:
+        description: "Name of the new keptn service"
+        required: true
         type: string
-        default: ${{ env.GITHUB_REPOSITORY }}
+      repository:
+        description: "Repository for docker image of the new keptn service (for example ghcr.io/<owner>/<repository>)"
+        required: true
+        type: string
+
+env:
+  ORIGINAL_IMAGE_NAME: ghcr.io/keptnsandbox/keptn-service-template-go
+  NEW_IMAGE_NAME: ${{ github.event.inputs.repository }}
+  ORIGINAL_SERVICE_NAME: keptn-service-template-go
+  NEW_SERVICE_NAME: ${{ github.event.inputs.service-name }}
+
 jobs:
   init_repo_job:
     runs-on: ubuntu-latest
     name: A job to initialize a repository freshly cloned from the template
     steps:
-      # To use this repository's private action,
-      # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.14' # The Go version to download (if necessary) and use.
+      - run: go version
       - name: Update the image name in helm chart and skaffold
-        env:
-          ORIGINAL_IMAGE_NAME: ghcr.io/keptnsandbox/keptn-service-template-go
-          NEW_IMAGE_NAME: ${{ github.event.inputs.repository }}
         run: |
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g') 
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" chart/values.yaml skaffold.yaml
+      - name: Update chart name and version
+        run: |
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g') 
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" ./**/*.yaml
+          sed -irn 's/version:.*$/version: "0.1.0"/g' chart/Chart.yaml
+          sed -irn 's/appVersion:.*$/appVersion: "0.1.0"/g' chart/Chart.yaml
+      - name: Update go module name
+        run: |
+          NEW_GO_MODULE=$(echo ${{ github.repositoryUrl }} | sed -rn 's/.*:(\/\/)?(github\.com\/.+)\.git/\2/p')
+          go mod edit -module ${NEW_GO_MODULE}
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
           version: v3.7.1
       - name: Dump rendered helm chart
         run: helm template chart
+      - name: Show git diff
+        run: git diff
