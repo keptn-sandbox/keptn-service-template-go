@@ -16,6 +16,7 @@ env:
   NEW_IMAGE_NAME: ${{ github.event.inputs.repository }}
   ORIGINAL_SERVICE_NAME: keptn-service-template-go
   NEW_SERVICE_NAME: ${{ github.event.inputs.service-name }}
+  TARGET_BRANCH: patch/initialize-repo
 
 jobs:
   init_repo_job:
@@ -55,3 +56,28 @@ jobs:
         run: helm template chart
       - name: Show git diff
         run: git diff
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions" # "${{ github.actor }}"
+          git config user.email "actions@github.com" # "${{ github.actor }}@users.noreply.github.com"
+      - name: "Commit changes to a branch and open Pull Request"
+        run: |
+          echo "Fetching origing including tags..."
+          git fetch origin --tags -f
+          # delete existing branch just in case
+          git branch -D ${TARGET_BRANCH} &>/dev/null || true
+          # create new branch
+          git checkout -b ${TARGET_BRANCH}
+          # add changes
+          echo "Add changes and commit"
+          git commit -as -m "chore: initialize template after cloning"
+          # push changes
+          echo "⚡️ Pushing changes to remote repository..."
+          git push -f --follow-tags --set-upstream origin ${TARGET_BRANCH}
+      - name: "Echo ref"
+        run: echo ${GITHUB_REF##refs/heads/}
+      - name: Create Pull Request"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --title "chore: Initialize template repository after cloning" --body "**This is an automated PR for one-time init of keptn service template**" --base "${GITHUB_REF##refs/heads/}"
