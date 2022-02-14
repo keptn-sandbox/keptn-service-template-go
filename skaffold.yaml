@@ -4,7 +4,7 @@ build:
   local:
     useBuildkit: true
   artifacts:
-    - image: ghcr.io/keptnsandbox/keptn-service-template-go # Todo: Replace this with your image name
+    - image: ghcr.io/keptn-sandbox/keptn-service-template-go # Todo: Replace this with your image name
       docker:
         dockerfile: Dockerfile
         buildArgs:
@@ -17,7 +17,7 @@ deploy:
       - name: keptn-service-template-go
         namespace: keptn
         artifactOverrides:
-          image: ghcr.io/keptnsandbox/keptn-service-template-go # Todo: Replace this with your image name
+          image: ghcr.io/keptn-sandbox/keptn-service-template-go # Todo: Replace this with your image name
         imageStrategy:
           helm: { }
         overrides:
