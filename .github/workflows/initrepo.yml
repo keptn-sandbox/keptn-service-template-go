@@ -49,6 +49,8 @@ jobs:
         uses: azure/setup-helm@v1
         with:
           version: v3.7.1
+      - name: Update CODEOWNERS file
+        run: echo '*  @${{ github.actor }}' >> CODEOWNERS
       - name: Dump rendered helm chart
         run: helm template chart
       - name: Show git diff
