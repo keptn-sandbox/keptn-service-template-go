@@ -1,22 +1,14 @@
 name: One-time repository initialization
 on:
   workflow_dispatch:
-    inputs:
-      service-name:
-        description: "Name of the new keptn service"
-        required: true
-        type: string
-      repository:
-        description: "Repository for docker image of the new keptn service (for example ghcr.io/<owner>/<repository>)"
-        required: true
-        type: string
 
 env:
-  ORIGINAL_IMAGE_NAME: ghcr.io/keptnsandbox/keptn-service-template-go
-  NEW_IMAGE_NAME: ${{ github.event.inputs.repository }}
+  ORIGINAL_IMAGE_NAME: ghcr.io/keptn-sandbox/keptn-service-template-go
+  NEW_IMAGE_NAME: ghcr.io/${{ github.repository }}
   ORIGINAL_SERVICE_NAME: keptn-service-template-go
-  NEW_SERVICE_NAME: ${{ github.event.inputs.service-name }}
   TARGET_BRANCH: patch/initialize-repo
+  ORIGINAL_REPO_NAME: keptn-sandbox/keptn-service-template-go
+  NEW_REPO_NAME: ${{ github.repository }}
 
 jobs:
   init_repo_job:
@@ -34,14 +26,37 @@ jobs:
         run: |
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g') 
-          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" chart/values.yaml skaffold.yaml
-      - name: Update chart name and version
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" chart/values.yaml skaffold.yaml chart/README.md
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" skaffold.yaml chart/README.md
+      - name: Update chart name, version and service name
         run: |
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g') 
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" ./**/*.yaml
           sed -irn 's/version:.*$/version: "0.1.0"/g' chart/Chart.yaml
           sed -irn 's/appVersion:.*$/appVersion: "0.1.0"/g' chart/Chart.yaml
+      - name: Update .ci_env, .gitignore, Dockerfile and GetSLI eventhandler
+        run: |
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g') 
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" .ci_env .gitignore Dockerfile main.go eventhandlers.go eventhandler_test.go test-events/*.json
+      - name: Update README.md
+        run: |
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" README.md
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" README.md
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" README.md
       - name: Update go module name
         run: |
           NEW_GO_MODULE=$(echo ${{ github.repositoryUrl }} | sed -rn 's/.*:(\/\/)?(github\.com\/.+)\.git/\2/p')
@@ -62,7 +77,7 @@ jobs:
           git config user.email "actions@github.com" # "${{ github.actor }}@users.noreply.github.com"
       - name: "Commit changes to a branch and open Pull Request"
         run: |
-          echo "Fetching origing including tags..."
+          echo "Fetching origin including tags..."
           git fetch origin --tags -f
           # delete existing branch just in case
           git branch -D ${TARGET_BRANCH} &>/dev/null || true
@@ -74,8 +89,24 @@ jobs:
           # push changes
           echo "⚡️ Pushing changes to remote repository..."
           git push -f --follow-tags --set-upstream origin ${TARGET_BRANCH}
-      - name: "Echo ref"
-        run: echo ${GITHUB_REF##refs/heads/}
+      - name: "Find other substitutions and commit again"
+        run: |
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
+          find . -type f -not -path '*/.git/*' -not -path '*/.github/*' -print0 | xargs -0 sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g"
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
+          find . -type f -not -path '*/.git/*' -not -path '*/.github/*' -print0 | xargs -0 sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g"
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
+          find . -type f -not -path '*/.git/*' -not -path '*/.github/*' -print0 | xargs -0 sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g"
+          # add changes
+          echo "Add changes and commit"
+          git commit -as -m "chore: further substitutions" || true
+          # push changes
+          echo "⚡️ Pushing changes to remote repository..."
+          git push
       - name: Create Pull Request"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
