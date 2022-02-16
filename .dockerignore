@@ -2,3 +2,4 @@ deploy/
 .idea/
 .github/
 *.md
+test-events/
