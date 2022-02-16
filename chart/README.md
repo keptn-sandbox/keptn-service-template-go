@@ -11,7 +11,7 @@ The following table lists the configurable parameters of the keptn-service-templ
 
 | Parameter                | Description             | Default        |
 | ------------------------ | ----------------------- | -------------- |
-| `image.repository` | Container image name | `"ghcr.io/keptnsandbox/keptn-service-template-go"` |
+| `image.repository` | Container image name | `"ghcr.io/keptn-sandbox/keptn-service-template-go"` |
 | `image.pullPolicy` | Kubernetes image pull policy | `"IfNotPresent"` |
 | `image.tag` | Container tag | `""` |
 | `service.enabled` | Creates a kubernetes service for the keptn-service-template-go | `true` |

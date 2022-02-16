@@ -1,5 +1,5 @@
 image:
-  repository: ghcr.io/keptnsandbox/keptn-service-template-go # Container Image Name
+  repository: ghcr.io/keptn-sandbox/keptn-service-template-go # Container Image Name
   pullPolicy: IfNotPresent                   # Kubernetes Image Pull Policy
   tag: ""                                    # Container Tag
 service:
