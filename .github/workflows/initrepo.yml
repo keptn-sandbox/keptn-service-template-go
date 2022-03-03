@@ -22,24 +22,24 @@ jobs:
         with:
           go-version: '^1.16.14' # The Go version to download (if necessary) and use.
       - run: go version
-      - name: Update the image name in helm chart and skaffold
+      - name: Update the image name in .ci_env, helm chart and skaffold
         run: |
-          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
-          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g') 
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g') 
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" chart/values.yaml skaffold.yaml chart/README.md
           NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
-          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
-          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
-          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" skaffold.yaml chart/README.md
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" skaffold.yaml chart/README.md .ci_env
       - name: Update chart name, version and service name
         run: |
           NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
-          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
-          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g') 
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g') 
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" ./**/*.yaml
           sed -irn 's/version:.*$/version: "0.1.0"/g' chart/Chart.yaml
           sed -irn 's/appVersion:.*$/appVersion: "0.1.0"/g' chart/Chart.yaml
-      - name: Update .ci_env, .gitignore, Dockerfile and GetSLI eventhandler
+      - name: Update .gitignore, Dockerfile and GetSLI eventhandler
         run: |
           NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
@@ -47,15 +47,15 @@ jobs:
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" .ci_env .gitignore Dockerfile main.go eventhandlers.go eventhandler_test.go test-events/*.json
       - name: Update README.md
         run: |
-          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
-          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" README.md
-          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
-          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_REPO_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_REPO_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" README.md
           NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
-          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
-          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" README.md
       - name: Update go module name
         run: |
@@ -91,8 +91,8 @@ jobs:
           git push -f --follow-tags --set-upstream origin ${TARGET_BRANCH}
       - name: "Find other substitutions and commit again"
         run: |
-          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
-          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
+          ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           find . -type f -not -path '*/.git/*' -not -path '*/.github/*' -print0 | xargs -0 sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g"
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
