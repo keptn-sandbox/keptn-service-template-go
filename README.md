@@ -79,10 +79,10 @@ Development can be conducted using any GoLang compatible IDE/editor (e.g., Jetbr
 
 It is recommended to make use of branches as follows:
 
-* `master` contains the latest potentially unstable version
+* `main`/`master` contains the latest potentially unstable version
 * `release-*` contains a stable version of the service (e.g., `release-0.1.0` contains version 0.1.0)
 * create a new branch for any changes that you are working on, e.g., `feature/my-cool-stuff` or `bug/overflow`
-* once ready, create a pull request from that branch back to the `master` branch
+* once ready, create a pull request from that branch back to the `main`/`master` branch
 
 When writing code, it is recommended to follow the coding style suggested by the [Golang community](https://github.com/golang/go/wiki/CodeReviewComments).
 
@@ -141,23 +141,10 @@ Docker Images are automatically pushed based on the configuration done in [.ci_e
 
 ## How to release a new version of this service
 
-It is assumed that the current development takes place in the master branch (either via Pull Requests or directly).
+It is assumed that the current development takes place in the `main`/`master` branch (either via Pull Requests or directly).
 
-To make use of the built-in automation using GH Actions for releasing a new version of this service, you should
+Once you're ready, go to the Actions tab on GitHub, select Pre-Release or Release, and run the action.
 
-* branch away from master to a branch called `release-x.y.z` (where `x.y.z` is your version),
-* write release notes in the [releasenotes/](releasenotes/) folder,
-* check the output of GH Actions builds for the release branch, 
-* verify that your image was built and pushed to DockerHub with the right tags,
-* update the image tags in [deploy/service.yaml], and
-* test your service against a working Keptn installation.
-
-If any problems occur, fix them in the release branch and test them again.
-
-Once you have confirmed that everything works and your version is ready to go, you should
-
-* create a new release on the release branch using the [GitHub releases page](https://github.com/keptn-sandbox/keptn-service-template-go/releases), and
-* merge any changes from the release branch back to the master branch.
 
 ## License
 
