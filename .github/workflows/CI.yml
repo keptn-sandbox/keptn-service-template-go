@@ -1,6 +1,6 @@
 name: CI
 on:
-  # always execute docker build when something is pushed to master or release-* branches
+  # always execute docker build when something is pushed to main/master or release-* branches
   push:
     branches:
       - 'master'
@@ -75,7 +75,7 @@ jobs:
             # Release Branch: extract version from branch name
             VERSION=${BRANCH#"release-"}
             else
-            if [[ "$BRANCH" == "master" ]]; then
+            if [[ "$BRANCH" == "master" || "$BRANCH" == "main" ]]; then
               # master branch = latest
               VERSION="${GIT_NEXT_TAG}-dev"
             else
