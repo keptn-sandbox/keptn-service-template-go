@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
@@ -41,8 +42,29 @@ func HandleConfigureMonitoringTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEve
 
 // HandleDeploymentTriggeredEvent handles deployment.triggered events
 // TODO: add in your handler code
-func HandleDeploymentTriggeredEvent(myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.DeploymentTriggeredEventData) error {
+func HandleDeploymentTriggeredEvent(ctx context.Context, myKeptn *keptnv2.Keptn, incomingEvent cloudevents.Event, data *keptnv2.DeploymentTriggeredEventData) error {
 	log.Printf("Handling deployment.triggered Event: %s", incomingEvent.Context.GetID())
+
+	// TODO: Remove after testing
+	_, err := myKeptn.SendTaskStartedEvent(data, ServiceName)
+
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to send task started CloudEvent (%s), aborting...", err.Error())
+		log.Println(errMsg)
+		return err
+	}
+
+	log.Println("Started cloudevent")
+	log.Println("Sleeping now!")
+
+	time.Sleep(60 * time.Second)
+
+	log.Println("Waking up!")
+
+	_, err = myKeptn.SendTaskFinishedEvent(&keptnv2.EventData{
+		Status: keptnv2.StatusSucceeded,
+		Result: keptnv2.ResultPass,
+	}, ServiceName)
 
 	return nil
 }

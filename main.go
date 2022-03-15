@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2" // make sure to use v2 cloudevents here
 	"github.com/kelseyhightower/envconfig"
@@ -15,6 +18,15 @@ import (
 )
 
 var keptnOptions = keptn.KeptnOpts{}
+
+type gracefulShutdownKeyType struct{}
+
+var gracefulShutdownKey = gracefulShutdownKeyType{}
+
+// Opaque key type used for graceful shutdown context value
+type keptnQuitType struct{}
+
+var testRunnerQuit = keptnQuitType{}
 
 type envConfig struct {
 	// Port on which to listen for cloudevents
@@ -187,7 +199,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.DeploymentTriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		return HandleDeploymentTriggeredEvent(myKeptn, event, eventData)
+		return HandleDeploymentTriggeredEvent(ctx, myKeptn, event, eventData)
 	case keptnv2.GetStartedEventType(keptnv2.DeploymentTaskName): // sh.keptn.event.deployment.started
 		log.Printf("Processing Deployment.Started Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
@@ -516,8 +528,7 @@ func _main(args []string, env envConfig) int {
 	log.Println("Starting keptn-service-template-go...")
 	log.Printf("    on Port = %d; Path=%s", env.Port, env.Path)
 
-	ctx := context.Background()
-	ctx = cloudevents.WithEncodingStructured(ctx)
+	ctx := getGracefulContext()
 
 	log.Printf("Creating new http handler")
 
@@ -535,5 +546,29 @@ func _main(args []string, env envConfig) int {
 	log.Printf("Starting receiver")
 	log.Fatal(c.StartReceiver(ctx, processKeptnCloudEvent))
 
+	log.Println("Stopped receiver")
+
 	return 0
+}
+
+//getGracefulContext returns a context with cancel and a waitgroup to sync handlers before shutdown
+func getGracefulContext() context.Context {
+	ch := make(chan os.Signal)
+	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+	wg := &sync.WaitGroup{}
+	ctx, cancel := context.WithCancel(context.WithValue(context.Background(), gracefulShutdownKey, wg))
+	ctx = cloudevents.WithEncodingStructured(ctx)
+	ctx = context.WithValue(ctx, testRunnerQuit, ch)
+	go func() {
+		<-ch
+		// In case of SIGINT or SIGTERM the service needs to stop and send an error event
+		// a quit channel is preferred to ctx.Done to avoid context being closed
+		// too early by the cloudevents StartReceiver
+		close(ch)
+		log.Fatal("Container termination triggered, starting graceful shutdown")
+		wg.Wait()
+		log.Fatal("cancelling context")
+		cancel()
+	}()
+	return ctx
 }

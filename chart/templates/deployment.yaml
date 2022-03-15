@@ -39,20 +39,14 @@ spec:
             value: "http://localhost:8081/configuration-service"
           - name: env
             value: 'production'
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 10999
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         - name: distributor
           image: "{{ .Values.distributor.image.repository }}:{{ .Values.distributor.image.tag | default .Chart.AppVersion }}"
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 10999
-            initialDelaySeconds: 5
-            periodSeconds: 5
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "/bin/sleep","60" ]
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -120,3 +114,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      terminationGracePeriodSeconds: 60
