@@ -26,7 +26,7 @@ var gracefulShutdownKey = gracefulShutdownKeyType{}
 // Opaque key type used for graceful shutdown context value
 type keptnQuitType struct{}
 
-var testRunnerQuit = keptnQuitType{}
+var serviceRunnerQuit = keptnQuitType{}
 
 type envConfig struct {
 	// Port on which to listen for cloudevents
@@ -573,7 +573,7 @@ func getGracefulContext() context.Context {
 	wg := &sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.WithValue(context.Background(), gracefulShutdownKey, wg))
 	ctx = cloudevents.WithEncodingStructured(ctx)
-	ctx = context.WithValue(ctx, testRunnerQuit, ch)
+	ctx = context.WithValue(ctx, serviceRunnerQuit, ch)
 	go func() {
 		<-ch
 		// In case of SIGINT or SIGTERM the service needs to stop and send an error event
