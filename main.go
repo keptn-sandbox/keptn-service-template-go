@@ -217,7 +217,7 @@ func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error 
 		eventData := &keptnv2.DeploymentTriggeredEventData{}
 		parseKeptnCloudEventPayload(event, eventData)
 
-		return HandleDeploymentTriggeredEvent(ctx, myKeptn, event, eventData)
+		return HandleDeploymentTriggeredEvent(myKeptn, event, eventData)
 	case keptnv2.GetStartedEventType(keptnv2.DeploymentTaskName): // sh.keptn.event.deployment.started
 		log.Printf("Processing Deployment.Started Event")
 		// Please note: Processing .started, .status.changed and .finished events is only recommended when you want to
