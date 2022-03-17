@@ -73,6 +73,8 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: 'metadata.labels[''app.kubernetes.io/version'']'
+            - name: DISTRIBUTOR_VERSION
+              value: {{ .Values.distributor.image.tag | default .Chart.AppVersion }}
             - name: K8S_DEPLOYMENT_NAME
               valueFrom:
                 fieldRef:
@@ -100,6 +102,12 @@ spec:
               value: "{{ .Values.remoteControlPlane.api.token }}"
             - name: HTTP_SSL_VERIFY
               value: "{{ .Values.remoteControlPlane.api.apiValidateTls | default "true" }}"
+            {{- end }}
+            {{- if (((.Values.distributor).config).queueGroup).enabled | default true }}
+            - name: PUBSUB_GROUP
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['app.kubernetes.io/name']
             {{- end }}
 
       {{- with .Values.nodeSelector }}
