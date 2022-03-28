@@ -56,30 +56,20 @@ func parseKeptnCloudEventPayload(event cloudevents.Event, data interface{}) erro
 	return nil
 }
 
+func synchronizedProcessCloudEvent(wg *sync.WaitGroup) func(context.Context, cloudevents.Event) error {
+	return func(ctx context.Context, event cloudevents.Event) error {
+		wg.Add(1)
+		defer wg.Done()
+		return processKeptnCloudEvent(ctx, event)
+	}
+}
+
 /**
  * This method gets called when a new event is received from the Keptn Event Distributor
  * Depending on the Event Type will call the specific event handler functions, e.g: handleDeploymentFinishedEvent
  * See https://github.com/keptn/spec/blob/0.2.0-alpha/cloudevents.md for details on the payload
  */
 func processKeptnCloudEvent(ctx context.Context, event cloudevents.Event) error {
-	ctx.Value(gracefulShutdownKey).(*sync.WaitGroup).Add(1)
-	val := ctx.Value(gracefulShutdownKey)
-	if val != nil {
-		if wg, ok := val.(*sync.WaitGroup); ok {
-			wg.Add(1)
-		}
-	}
-
-	defer func() {
-		val := ctx.Value(gracefulShutdownKey)
-		if val == nil {
-			return
-		}
-		if wg, ok := val.(*sync.WaitGroup); ok {
-			wg.Done()
-		}
-	}()
-
 	// create keptn handler
 	log.Printf("Initializing Keptn Handler")
 	myKeptn, err := keptnv2.NewKeptn(&event, keptnOptions)
@@ -548,12 +538,17 @@ func _main(args []string, env envConfig) int {
 	log.Println("Starting keptn-service-template-go...")
 	log.Printf("    on Port = %d; Path=%s", env.Port, env.Path)
 
-	ctx := getGracefulContext()
+	// ctx := getGracefulContext()
+	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+
+	wg := sync.WaitGroup{}
 
 	log.Printf("Creating new http handler")
 
 	// configure http server to receive cloudevents
-	p, err := cloudevents.NewHTTP(cloudevents.WithPath(env.Path), cloudevents.WithPort(env.Port), cloudevents.WithGetHandlerFunc(HTTPGetHandler))
+	p, err := cloudevents.NewHTTP(
+		cloudevents.WithPath(env.Path), cloudevents.WithPort(env.Port), cloudevents.WithGetHandlerFunc(HTTPGetHandler),
+	)
 
 	if err != nil {
 		log.Fatalf("failed to create client, %v", err)
@@ -563,12 +558,15 @@ func _main(args []string, env envConfig) int {
 		log.Fatalf("failed to create client, %v", err)
 	}
 
-	log.Fatal(c.StartReceiver(ctx, processKeptnCloudEvent))
-
+	err = c.StartReceiver(ctx, synchronizedProcessCloudEvent(&wg))
+	log.Printf("CloudEvent receiver terminated with: %v", err)
+	log.Printf("Waiting for ongoing event handling completion.")
+	wg.Wait()
+	log.Printf("Shutdown complete.")
 	return 0
 }
 
-//getGracefulContext returns a context with cancel and a waitgroup to sync handlers before shutdown
+// getGracefulContext returns a context with cancel and a waitgroup to sync handlers before shutdown
 func getGracefulContext() context.Context {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
