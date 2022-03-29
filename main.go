@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2" // make sure to use v2 cloudevents here
@@ -54,14 +53,6 @@ func parseKeptnCloudEventPayload(event cloudevents.Event, data interface{}) erro
 		return err
 	}
 	return nil
-}
-
-func synchronizedProcessCloudEvent(wg *sync.WaitGroup) func(context.Context, cloudevents.Event) error {
-	return func(ctx context.Context, event cloudevents.Event) error {
-		wg.Add(1)
-		defer wg.Done()
-		return processKeptnCloudEvent(ctx, event)
-	}
 }
 
 /**
@@ -541,8 +532,6 @@ func _main(args []string, env envConfig) int {
 	// ctx := getGracefulContext()
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 
-	wg := sync.WaitGroup{}
-
 	log.Printf("Creating new http handler")
 
 	// configure http server to receive cloudevents
@@ -558,34 +547,14 @@ func _main(args []string, env envConfig) int {
 		log.Fatalf("failed to create client, %v", err)
 	}
 
-	err = c.StartReceiver(ctx, synchronizedProcessCloudEvent(&wg))
-	log.Printf("CloudEvent receiver terminated with: %v", err)
-	log.Printf("Waiting for ongoing event handling completion.")
-	wg.Wait()
+	err = c.StartReceiver(ctx, processKeptnCloudEvent)
+	if err != nil {
+		log.Printf("CloudEvent receiver stopped with error: %v", err)
+	} else {
+		log.Printf("CloudEvent receiver stopped.")
+	}
 	log.Printf("Shutdown complete.")
 	return 0
-}
-
-// getGracefulContext returns a context with cancel and a waitgroup to sync handlers before shutdown
-func getGracefulContext() context.Context {
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-	wg := &sync.WaitGroup{}
-	ctx, cancel := context.WithCancel(context.WithValue(context.Background(), gracefulShutdownKey, wg))
-	ctx = cloudevents.WithEncodingStructured(ctx)
-	ctx = context.WithValue(ctx, serviceRunnerQuit, ch)
-	go func() {
-		<-ch
-		// In case of SIGINT or SIGTERM the service needs to stop and send an error event
-		// a quit channel is preferred to ctx.Done to avoid context being closed
-		// too early by the cloudevents StartReceiver
-		close(ch)
-		log.Println("Container termination triggered, starting graceful shutdown")
-		wg.Wait()
-		log.Println("cancelling context")
-		cancel()
-	}()
-	return ctx
 }
 
 // HTTPGetHandler will handle all requests for '/health' and '/ready'
