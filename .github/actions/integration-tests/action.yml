@@ -1,0 +1,66 @@
+name: Integration Tests
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '0 3 * * 1-5' # run integration tests at 3 AM, monday to friday (1-5)
+
+  workflow_dispatch: # run integration tests only when triggered manually
+    inputs:
+      branch:
+        description: 'Take CI build artifacts from branch (e.g., master, release-x.y.z)'
+        required: true
+        default: 'master'
+env:
+  META_KEPTN_VERSION: 0.11.4
+  META_KEPTN_KEPTN_PROJECT: keptn
+defaults:
+  run:
+    shell: bash
+jobs:
+  test_keptn_install:
+    name: Test Keptn install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install and start K3s
+        run: curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -
+
+      - name: Install Keptn
+        id: install_keptn
+        uses: keptn-sandbox/action-install-keptn@main
+        with:
+          KEPTN_VERSION: "0.13.1"
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+      - name: Test connection to keptn
+        run: |
+          curl -X GET "${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}/v1/metadata" -H  "accept: application/json" -H  "x-token: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}"
+      - name: Install Helm
+        run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Checkout keptn-contrib/keptn-service-template-go
+        uses: actions/checkout@v2.4.0
+        with:
+          repository: keptn-sandbox/keptn-service-template-go
+          path: keptn-service-template-go
+
+      - name: Build helm chart
+        shell: bash
+        working-directory: keptn-service-template-go
+        run: gh-actions-scripts/build_helm_chart.sh 0.11.4 0.11.4 keptn-service-template-go
+
+      - name: Install helm chart
+        shell: bash
+        working-directory: keptn-service-template-go
+        run: helm upgrade --install -n keptn keptn-service-template-go installer/keptn-service-template-go-0.11.4.tgz
+
+      - name: Run integration tests
+        shell: bash
+        working-directory: keptn-service-template-go
+        run: go test -race -v ./...
+
+      - name: Uninstall Keptn
+        uses: keptn-sandbox/action-install-keptn@main
+        with:
+          UNINSTALL: true
+          KEPTN_VERSION: "0.13.1"
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
