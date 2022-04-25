@@ -15,7 +15,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"os"
-	"strconv"
 	"testing"
 	"time"
 )
@@ -32,16 +31,6 @@ func readKeptnConnectionDetailsFromEnv() KeptnConnectionDetails {
 		Endpoint: os.Getenv("KEPTN_ENDPOINT"),
 		APIToken: os.Getenv("KEPTN_API_TOKEN"),
 	}
-}
-
-// isE2ETestingAllowed checks if the E2E tests are allowed to run by parsing environment variables
-func isE2ETestingAllowed() bool {
-	boolean, err := strconv.ParseBool(os.Getenv("JES_E2E_TEST"))
-	if err != nil {
-		return false
-	}
-
-	return boolean
 }
 
 // convertKeptnModelToErrorString transforms the models.Error structure to an error string
@@ -221,10 +210,12 @@ func requireWaitForEvent(t *testing.T, api KeptnAPI, waitFor time.Duration, tick
 	require.Eventuallyf(t, checkForEventsToMatch, waitFor, tick, "did not receive keptn event: %s", eventType)
 }
 
+// CreateTmpShipyardFile creates a temporary shipyard file from the provided YAML content and returns the name of the file
 func CreateTmpShipyardFile(shipyardContent string) (string, error) {
 	return CreateTmpFile("shipyard-*.yaml", shipyardContent)
 }
 
+// CreateTmpFile creates a temporary file using the provided file content
 func CreateTmpFile(fileNamePattern, fileContent string) (string, error) {
 	file, err := ioutil.TempFile("", fileNamePattern)
 	if err != nil {
@@ -240,6 +231,7 @@ func CreateTmpFile(fileNamePattern, fileContent string) (string, error) {
 	return file.Name(), nil
 }
 
+// CreateTmpDir creates a temporary directory on the file system
 func CreateTmpDir() (string, error) {
 	return ioutil.TempDir("", "")
 }

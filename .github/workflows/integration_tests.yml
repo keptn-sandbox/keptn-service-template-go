@@ -9,15 +9,12 @@ on:
       branch:
         description: 'Take CI build artifacts from branch (e.g., master, release-x.y.z)'
         required: true
-        default: 'master'
-env:
-  META_KEPTN_VERSION: 0.11.4
-  META_KEPTN_KEPTN_PROJECT: keptn
+        default: 'main'
 defaults:
   run:
     shell: bash
 jobs:
-  test_keptn_install:
+  integration_test:
     name: Test Keptn install
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +35,7 @@ jobs:
         run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       - name: Checkout keptn-contrib/keptn-service-template-go
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
         with:
           repository: keptn-sandbox/keptn-service-template-go
           path: keptn-service-template-go
