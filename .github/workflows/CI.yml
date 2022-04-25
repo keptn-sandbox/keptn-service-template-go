@@ -127,16 +127,12 @@ jobs:
         with:
           env-file: .ci_env
 
-      - name: Docker Build
-        id: docker_build
-        uses: keptn/gh-automation/.github/actions/docker-build@v1.5.2
+      - name: Build and push
+        uses: docker/build-push-action@v2
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAGS: |
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE }}:${{ env.VERSION }}
-          BUILD_ARGS: |
-            version=${{ env.VERSION }}
-          PUSH: ${{(github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository)}}
+          context: .
+          push: true
+          tags: ghcr.io/${{ steps.repo_slug.outputs.result }}/${{ env.IMAGE }}:${{ env.VERSION }}
 
       - id: report_docker_build_to_pr
         name: Report Docker Build to PR
