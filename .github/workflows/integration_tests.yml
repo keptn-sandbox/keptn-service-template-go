@@ -46,12 +46,12 @@ jobs:
       - name: Build helm chart
         shell: bash
         working-directory: keptn-service-template-go
-        run: gh-actions-scripts/build_helm_chart.sh 0.11.4 0.11.4 keptn-service-template-go
+        run: gh-actions-scripts/build_helm_chart.sh 0.13.1 0.13.1 keptn-service-template-go
 
       - name: Install helm chart
         shell: bash
         working-directory: keptn-service-template-go
-        run: helm upgrade --install -n keptn keptn-service-template-go installer/keptn-service-template-go-0.11.4.tgz
+        run: helm upgrade --install -n keptn keptn-service-template-go installer/keptn-service-template-go-0.13.1.tgz
 
       - name: Run integration tests
         shell: bash
