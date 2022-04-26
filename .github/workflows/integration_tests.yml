@@ -17,6 +17,8 @@ jobs:
   integration_test:
     name: Test Keptn install
     runs-on: ubuntu-latest
+    env:
+      ENABLE_E2E_TEST: true
     steps:
       - name: Install and start K3s
         run: curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -

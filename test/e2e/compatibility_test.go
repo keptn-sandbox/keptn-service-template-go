@@ -82,7 +82,11 @@ const sliTriggeredEvent = `
     "shkeptncontext": "da7aec34-78c4-4182-a2c8-51eb88f5871d"
 }`
 
-func Test_ActionTriggeredTest(t *testing.T) {
+func Test_ActionTriggered(t *testing.T) {
+	if !isE2ETestingAllowed() {
+		t.Skip("Skipping Test_ActionTriggered, not allowed by environment")
+	}
+
 	shipyardFilePath, err := CreateTmpShipyardFile(shipyard)
 
 	require.Nil(t, err)
@@ -133,7 +137,11 @@ func Test_ActionTriggeredTest(t *testing.T) {
 	)
 }
 
-func Test_SLITriggeredTest(t *testing.T) {
+func Test_SLITriggered(t *testing.T) {
+	if !isE2ETestingAllowed() {
+		t.Skip("Skipping Test_SLITriggered, not allowed by environment")
+	}
+
 	shipyardFilePath, err := CreateTmpShipyardFile(shipyard)
 
 	require.Nil(t, err)
