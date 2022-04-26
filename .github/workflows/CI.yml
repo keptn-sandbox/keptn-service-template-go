@@ -128,11 +128,14 @@ jobs:
           env-file: .ci_env
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: keptn/gh-automation/.github/actions/docker-build@v1.5.2
+        id: repo_slug
         with:
           context: .
           push: true
           tags: ghcr.io/${{ steps.repo_slug.outputs.result }}/${{ env.IMAGE }}:${{ env.VERSION }}
+          result-encoding: string
+          script: return '${{ github.repository_owner }}'.toLowerCase()
 
       - id: report_docker_build_to_pr
         name: Report Docker Build to PR
