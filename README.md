@@ -33,11 +33,13 @@ This implements a keptn-service-template-go for Keptn. If you want to learn more
 
 *Please fill in your versions accordingly*
 
-| Keptn Version    | [Keptn-Service-Template-Go Docker Image](https://hub.docker.com/r/keptn-sandbox/keptn-service-template-go/tags) |
-|:----------------:|:----------------------------------------:|
-|       0.6.1      | keptn-sandbox/keptn-service-template-go:0.1.0 |
-|       0.7.1      | keptn-sandbox/keptn-service-template-go:0.1.1 |
-|       0.7.2      | keptn-sandbox/keptn-service-template-go:0.1.2 |
+| Keptn Version | [Keptn-Service-Template-Go Docker Image](https://hub.docker.com/r/keptn-sandbox/keptn-service-template-go/tags) |
+|:-------------:|:---------------------------------------------------------------------------------------------------------------:|
+|    0.6-0.8    |                                  keptn-sandbox/keptn-service-template-go:0.8.3                                  |
+|    0.10.x     |                                 keptn-sandbox/keptn-service-template-go:0.10.0                                  |
+|    0.11.x     |                                 keptn-sandbox/keptn-service-template-go:0.11.4                                  |
+|    0.12.x     |                                 keptn-sandbox/keptn-service-template-go:0.12.2                                  |
+|    0.13.x     |                                 keptn-sandbox/keptn-service-template-go:0.13.0                                  |
 
 ## Installation
 
