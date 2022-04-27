@@ -51,28 +51,28 @@ jobs:
 
       # Download artifacts from last CI run
       - name: Download artifacts
-      uses: dawidd6/action-download-artifact@v2.19.0
-      id: download_artifacts_push
-      with:
-        # Download last successful artifact from a CI build
-        github_token: ${{secrets.GITHUB_TOKEN}}
-        workflow: CI.yml
-        branch: ${{ env.BRANCH }}
-        path: ./dist
+        uses: dawidd6/action-download-artifact@v2.19.0
+        id: download_artifacts_push
+        with:
+          # Download last successful artifact from a CI build
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: CI.yml
+          branch: ${{ env.BRANCH }}
+          path: ./dist
 
       # Install Keptn-Service-Template-Go from downloaded helm chart
       - name: Install Keptn-Service-Template-Go
-      env:
-        KEPTN_API_PROTOCOL: http
-        KEPTN_API_TOKEN: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}
-      run: |
-        ls -lah ./dist/helm-charts/
-        
-        KEPTN_API_HOST=$(echo  ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }} | sed 's/^http:\/\/\(.*\)\/api/\1/')
-        helm upgrade --install --create-namespace -n keptn keptn-service-template-go \
-          ./dist/helm-charts/keptn-service-template-go-*.tgz \
-          --set remoteControlPlane.api.protocol=${KEPTN_API_PROTOCOL},remoteControlPlane.api.hostname=${KEPTN_API_HOST},remoteControlPlane.api.token=${KEPTN_API_TOKEN} \
-          --wait
+        env:
+          KEPTN_API_PROTOCOL: http
+          KEPTN_API_TOKEN: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}
+        run: |
+          ls -lah ./dist/helm-charts/
+          
+          KEPTN_API_HOST=$(echo  ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }} | sed 's/^http:\/\/\(.*\)\/api/\1/')
+          helm upgrade --install --create-namespace -n keptn keptn-service-template-go \
+            ./dist/helm-charts/keptn-service-template-go-*.tgz \
+            --set remoteControlPlane.api.protocol=${KEPTN_API_PROTOCOL},remoteControlPlane.api.hostname=${KEPTN_API_HOST},remoteControlPlane.api.token=${KEPTN_API_TOKEN} \
+            --wait
 
       - name: Run integration tests
         shell: bash
