@@ -12,6 +12,8 @@ on:
       - 'master'
       - 'main'
       - 'release-*'
+
+  workflow_dispatch: # run integration tests only when triggered manually
 defaults:
   run:
     shell: bash
