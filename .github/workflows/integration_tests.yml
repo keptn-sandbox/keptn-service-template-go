@@ -20,6 +20,7 @@ jobs:
     env:
       GO_VERSION: 1.17
       ENABLE_E2E_TEST: true
+      BRANCH: ${{ github.head_ref || github.ref_name }}
     steps:
       - name: Install Go
         uses: actions/setup-go@v3.0.0
