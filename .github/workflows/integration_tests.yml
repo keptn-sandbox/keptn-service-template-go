@@ -59,38 +59,14 @@ jobs:
         run: |
           curl -X GET "${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}/v1/metadata" -H  "accept: application/json" -H  "x-token: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}"
 
-      #- name: Install Helm
-      #  run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
       # Install Keptn-Service-Template-Go from downloaded helm chart
       - name: Install Keptn-Service-Template-Go
-        env:
-          KEPTN_API_PROTOCOL: http
-          KEPTN_API_TOKEN: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}
-        run: |
-          ls -lah ./dist/helm-charts/
-          
-          KEPTN_API_HOST=$(echo  ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }} | sed 's/^http:\/\/\(.*\)\/api/\1/')
+        run: |          
           helm upgrade --install --create-namespace -n keptn keptn-service-template-go \
             ./dist/helm-charts/keptn-service-template-go-*.tgz \
-            --set remoteControlPlane.api.protocol=${KEPTN_API_PROTOCOL},remoteControlPlane.api.hostname=${KEPTN_API_HOST},remoteControlPlane.api.token=${KEPTN_API_TOKEN} \
             --wait
-
-      - name: Debug
-        if: ${{ always() }}
-        run: |
-          kubectl -n keptn get pods
-          kubectl -n keptn get events
-          kubectl -n keptn get deployments -o wide
 
       - name: Run integration tests
         shell: bash
         working-directory: keptn-service-template-go
         run: go test -race -v ./...
-
-      - name: Uninstall Keptn
-        uses: keptn-sandbox/action-install-keptn@main
-        with:
-          UNINSTALL: true
-          KEPTN_VERSION: "0.13.1"
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
