@@ -73,7 +73,6 @@ jobs:
           KEPTN_API_HOST=$(echo  ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }} | sed 's/^http:\/\/\(.*\)\/api/\1/')
           helm upgrade --install --create-namespace -n keptn keptn-service-template-go \
             ./dist/helm-charts/keptn-service-template-go-*.tgz \
-            --set remoteControlPlane.api.protocol=${KEPTN_API_PROTOCOL},remoteControlPlane.api.hostname=${KEPTN_API_HOST},remoteControlPlane.api.token=${KEPTN_API_TOKEN} \
             --wait
 
       - name: Run integration tests
