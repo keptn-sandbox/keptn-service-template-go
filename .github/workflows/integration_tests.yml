@@ -27,23 +27,6 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - name: Install and start K3s
-        run: curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -
-
-      - name: Install Keptn
-        id: install_keptn
-        uses: keptn-sandbox/action-install-keptn@v1.0.0
-        timeout-minutes: 5
-        with:
-          KEPTN_VERSION: ${{ matrix.keptn-version }}
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-
-      - name: Test connection to keptn
-        run: |
-          curl -X GET "${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}/v1/metadata" -H  "accept: application/json" -H  "x-token: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}"
-      - name: Install Helm
-        run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
       - name: Checkout keptn-contrib/keptn-service-template-go
         uses: actions/checkout@v3
         with:
@@ -60,6 +43,24 @@ jobs:
           workflow: CI.yml
           branch: ${{ env.BRANCH }}
           path: ./dist
+
+      - name: Install and start K3s
+        run: curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -
+
+      - name: Install Keptn
+        id: install_keptn
+        uses: keptn-sandbox/action-install-keptn@v1.0.0
+        timeout-minutes: 5
+        with:
+          KEPTN_VERSION: ${{ matrix.keptn-version }}
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+      - name: Test connection to keptn
+        run: |
+          curl -X GET "${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}/v1/metadata" -H  "accept: application/json" -H  "x-token: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}"
+
+      #- name: Install Helm
+      #  run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       # Install Keptn-Service-Template-Go from downloaded helm chart
       - name: Install Keptn-Service-Template-Go
