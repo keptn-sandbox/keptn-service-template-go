@@ -1,0 +1,72 @@
+name: Integration Tests
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '0 3 * * 1-5' # run integration tests at 3 AM, monday to friday (1-5)
+
+  workflow_dispatch: # run integration tests only when triggered manually
+
+defaults:
+  run:
+    shell: bash
+jobs:
+  integration_test:
+    name: "Integration tests"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        keptn-version: [ "0.11.4", "0.12.6", "0.13.4", "0.14.1" ]
+    env:
+      GO_VERSION: 1.17
+      ENABLE_E2E_TEST: true
+      BRANCH: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v3.0.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Checkout keptn-contrib/keptn-service-template-go
+        uses: actions/checkout@v3
+        with:
+          repository: keptn-sandbox/keptn-service-template-go
+          path: keptn-service-template-go
+
+      # Download artifacts from last CI run
+      - name: Download artifacts
+        uses: dawidd6/action-download-artifact@v2.19.0
+        id: download_artifacts_push
+        with:
+          # Download last successful artifact from a CI build
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: CI.yml
+          branch: ${{ env.BRANCH }}
+          path: ./dist
+
+      - name: Install and start K3s
+        run: curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -
+
+      - name: Install Keptn
+        id: install_keptn
+        uses: keptn-sandbox/action-install-keptn@v1.0.0
+        timeout-minutes: 5
+        with:
+          KEPTN_VERSION: ${{ matrix.keptn-version }}
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+      - name: Test connection to keptn
+        run: |
+          curl -X GET "${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}/v1/metadata" -H  "accept: application/json" -H  "x-token: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}"
+
+      # Install Keptn-Service-Template-Go from downloaded helm chart
+      - name: Install Keptn-Service-Template-Go
+        run: |          
+          helm upgrade --install --create-namespace -n keptn keptn-service-template-go \
+            ./dist/helm-charts/keptn-service-template-go-*.tgz \
+            --wait
+
+      - name: Run integration tests
+        shell: bash
+        working-directory: keptn-service-template-go
+        run: go test -race -v ./...

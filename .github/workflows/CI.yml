@@ -12,6 +12,9 @@ on:
       - 'master'
       - 'main'
       - 'release-*'
+
+  workflow_dispatch: # run integration tests only when triggered manually
+
 defaults:
   run:
     shell: bash
@@ -149,3 +152,31 @@ jobs:
           message: |
             The following Docker Images have been built:
             ${{ fromJSON(steps.docker_build.outputs.BUILD_METADATA)['image.name'] }}
+
+  helm_chart_build:
+    needs: [prepare_ci_run, docker_build]
+    name: Build Helm Charts
+    runs-on: ubuntu-20.04
+    env:
+      VERSION: ${{ needs.prepare_ci_run.outputs.VERSION }}
+      DATETIME: ${{ needs.prepare_ci_run.outputs.DATETIME }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3.0.0
+
+      - name: Load CI Environment from .ci_env
+        id: load_ci_env
+        uses: c-py/action-dotenv-to-setenv@v3
+        with:
+          env-file: .ci_env
+
+      - name: Build Helm Charts
+        id: build_helm_charts
+        run: ./gh-actions-scripts/build_helm_chart.sh "${VERSION}" "${VERSION}.${DATETIME}" "${IMAGE}"
+
+      - name: Upload Helm Chart as an artifact
+        id: upload_helm_chart
+        uses: actions/upload-artifact@v3
+        with:
+          name: helm-charts
+          path: installer/*.tgz
