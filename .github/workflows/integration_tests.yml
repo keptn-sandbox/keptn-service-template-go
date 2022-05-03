@@ -78,6 +78,10 @@ jobs:
           kubectl -n keptn get events --sort-by='{.lastTimestamp}'
           kubectl -n keptn get deployments -o wide
           kubectl -n keptn describe deployment keptn-service-template-go
+          echo "Env variables"
+          echo "Endpoint: $KEPTN_ENDPOINT"
+          echo "Token: $KEPTN_API_TOKEN"
+          echo "ENABLE_E2E_TEST: $ENABLE_E2E_TEST"
 
       - name: Run integration tests
         shell: bash
