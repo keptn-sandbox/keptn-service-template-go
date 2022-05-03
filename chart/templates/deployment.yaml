@@ -74,6 +74,8 @@ spec:
               memory: "128Mi"
               cpu: "500m"
           env:
+            - name: PUBSUB_URL
+              value: 'nats://keptn-nats'
             - name: PUBSUB_TOPIC
               value: {{ .Values.distributor.pubsubTopic }}
             - name: PUBSUB_RECIPIENT

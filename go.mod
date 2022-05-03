@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/cloudevents/sdk-go/v2 v2.5.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/keptn/go-utils v0.13.0
+	github.com/keptn/go-utils v0.14.0
 	github.com/keptn/kubernetes-utils v0.13.0
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/stretchr/testify v1.7.0
