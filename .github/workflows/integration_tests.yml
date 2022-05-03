@@ -65,31 +65,15 @@ jobs:
         run: |
           helm upgrade --install --create-namespace -n keptn keptn-service-template-go \
             ./dist/helm-charts/keptn-service-template-go-*.tgz \
-            --wait --timeout 10m
+            --wait
 
-      - name: Debug
-        if: ${{ always() }}
-        env:
-          KEPTN_ENDPOINT: ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}
-          KEPTN_API_TOKEN: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}
+      - name: Prepare test environment
         run: |
-          helm version
-          kubectl version
-          helm ls
-          kubectl get namespace
-          kubectl -n keptn get pods
-          kubectl -n keptn get events --sort-by='{.lastTimestamp}'
-          kubectl -n keptn get deployments -o wide
-          kubectl -n keptn describe deployment keptn-service-template-go
-          echo "Env variables"
-          echo "Endpoint: $KEPTN_ENDPOINT"
-          echo "Token: $KEPTN_API_TOKEN"
-          echo "ENABLE_E2E_TEST: $ENABLE_E2E_TEST"
+          echo "KEPTN_ENDPOINT=$(echo ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }} | sed 's/^http:\/\/\(.*\)/\1/')" >> $GITHUB_ENV
+          echo "KEPTN_API_TOKEN=${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}" >> $GITHUB_ENV
+          go mod download
 
       - name: Run integration tests
         shell: bash
-        env:
-          KEPTN_ENDPOINT: ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}
-          KEPTN_API_TOKEN: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}
         working-directory: keptn-service-template-go
         run: go test -race -v ./...
