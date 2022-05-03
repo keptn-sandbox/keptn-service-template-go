@@ -69,6 +69,9 @@ jobs:
 
       - name: Debug
         if: ${{ always() }}
+        env:
+          KEPTN_ENDPOINT: ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}
+          KEPTN_API_TOKEN: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}
         run: |
           helm version
           kubectl version
@@ -85,5 +88,8 @@ jobs:
 
       - name: Run integration tests
         shell: bash
+        env:
+          KEPTN_ENDPOINT: ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}
+          KEPTN_API_TOKEN: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}
         working-directory: keptn-service-template-go
         run: go test -race -v ./...
