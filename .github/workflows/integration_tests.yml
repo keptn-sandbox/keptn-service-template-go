@@ -12,13 +12,14 @@ defaults:
 jobs:
   integration_test:
     name: "Integration tests"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
         keptn-version: [ "0.11.4", "0.12.6", "0.13.4", "0.14.1" ]
     env:
       GO_VERSION: 1.17
+      GO111MODULE: "on"
       ENABLE_E2E_TEST: true
       BRANCH: ${{ github.head_ref || github.ref_name }}
     steps:
@@ -50,7 +51,7 @@ jobs:
       - name: Install Keptn
         id: install_keptn
         uses: keptn-sandbox/action-install-keptn@v1.0.0
-        timeout-minutes: 5
+        timeout-minutes: 10
         with:
           KEPTN_VERSION: ${{ matrix.keptn-version }}
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
@@ -61,12 +62,15 @@ jobs:
 
       # Install Keptn-Service-Template-Go from downloaded helm chart
       - name: Install Keptn-Service-Template-Go
-        run: |          
+        run: |
           helm upgrade --install --create-namespace -n keptn keptn-service-template-go \
             ./dist/helm-charts/keptn-service-template-go-*.tgz \
             --wait
 
       - name: Run integration tests
+        env:
+          KEPTN_ENDPOINT: ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}
+          KEPTN_API_TOKEN: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}
         shell: bash
         working-directory: keptn-service-template-go
         run: go test -race -v ./...
