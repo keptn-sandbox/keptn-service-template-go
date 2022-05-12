@@ -31,11 +31,18 @@ jobs:
         with:
           env-file: .ci_env
 
+      - name: Sanitize repo owner
+        uses: actions/github-script@v4
+        id: repo_slug
+        with:
+          result-encoding: string
+          script: return '${{ github.repository_owner }}'.toLowerCase()
+
       - name: Docker Build
         uses: keptn/gh-automation/.github/actions/docker-build@v1.5.3
         with:
           TAGS: |
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE }}:${{ env.VERSION }}
+            ghcr.io/${{ steps.repo_slug.outputs.result }}/${{ env.IMAGE }}:${{ env.VERSION }}
           BUILD_ARGS: |
             version=${{ env.VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
