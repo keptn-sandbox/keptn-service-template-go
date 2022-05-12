@@ -40,6 +40,12 @@ This implements a keptn-service-template-go for Keptn. If you want to learn more
 |    0.11.x     |                                 keptn-sandbox/keptn-service-template-go:0.11.4                                  |
 |    0.12.x     |                                 keptn-sandbox/keptn-service-template-go:0.12.2                                  |
 |    0.13.x     |                                 keptn-sandbox/keptn-service-template-go:0.13.0                                  |
+|    0.14.x     |                                 keptn-sandbox/keptn-service-template-go:0.14.0                                  |
+
+\* This is the Keptn version we aim to be compatible with. Other versions should work too, but there is no guarantee.
+
+**Note**: Versions compatible with Keptn 0.14.x and newer are not backward compatible due to a change in NATS cluster name
+(see https://github.com/keptn/keptn/releases/tag/0.14.1 for more info about the breaking change).
 
 ## Installation
 
