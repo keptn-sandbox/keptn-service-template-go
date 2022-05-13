@@ -130,14 +130,21 @@ jobs:
         with:
           env-file: .ci_env
 
+      - name: Sanitize repo owner
+        uses: actions/github-script@v4
+        id: repo_slug
+        with:
+          result-encoding: string
+          script: return '${{ github.repository_owner }}'.toLowerCase()
+
       - name: Docker Build
         id: docker_build
         uses: keptn/gh-automation/.github/actions/docker-build@v1.5.3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAGS: |
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE }}:${{ env.VERSION }}
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE }}:${{ env.VERSION }}.${{ env.DATETIME }}
+            ghcr.io/${{ steps.repo_slug.outputs.result }}/${{ env.IMAGE }}:${{ env.VERSION }}
+            ghcr.io/${{ steps.repo_slug.outputs.result }}/${{ env.IMAGE }}:${{ env.VERSION }}.${{ env.DATETIME }}
           BUILD_ARGS: |
             version=${{ env.VERSION }}
           PUSH: ${{(github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository)}}
