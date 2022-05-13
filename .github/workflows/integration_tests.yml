@@ -54,7 +54,7 @@ jobs:
         timeout-minutes: 5
         run: |
           # uncomment the line below for debugging
-          # set -x
+          set -x
           k3sReady=$(kubectl get node $(hostname) -ogo-template --template="{{ range .status.conditions }} {{- if eq .type \"Ready\" }}{{ .status }} {{- end }} {{- end }}" || echo "")
           while [ "$k3sReady" != "True" ]; do
           echo "K3s is not ready yet, sleep awhile to let things settle"
