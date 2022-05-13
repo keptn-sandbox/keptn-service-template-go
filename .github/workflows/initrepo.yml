@@ -22,24 +22,18 @@ jobs:
         with:
           go-version: '^1.17.5' # The Go version to download (if necessary) and use.
       - run: go version
-      - name: Sanitize repo owner
-        uses: actions/github-script@v4
-        id: repo_slug
-        with:
-          result-encoding: string
-          script: return '${{ github.repository_owner }}'.toLowerCase()
       - name: Update the image name in .ci_env, helm chart and skaffold
         run: |
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g') 
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" chart/values.yaml skaffold.yaml chart/README.md
-          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ steps.repo_slug.outputs.result }}\///')
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" skaffold.yaml chart/README.md .ci_env
       - name: Update chart name, version and service name
         run: |
-          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ steps.repo_slug.outputs.result }}\///')
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g') 
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" ./**/*.yaml
@@ -47,7 +41,7 @@ jobs:
           sed -irn 's/appVersion:.*$/appVersion: "0.1.0"/g' chart/Chart.yaml
       - name: Update .gitignore, Dockerfile and GetSLI eventhandler
         run: |
-          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ steps.repo_slug.outputs.result }}\///')
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g') 
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" .ci_env .gitignore Dockerfile main.go eventhandlers.go eventhandler_test.go test-events/*.json
@@ -59,7 +53,7 @@ jobs:
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_REPO_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_REPO_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" README.md
-          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ steps.repo_slug.outputs.result }}\///')
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
           sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" README.md
@@ -103,7 +97,7 @@ jobs:
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_REPO_NAME" | sed -e 's/[\/&]/\\&/g')
           find . -type f -not -path '*/.git/*' -not -path '*/.github/*' -print0 | xargs -0 sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g"
-          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ steps.repo_slug.outputs.result }}\///')
+          NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
           find . -type f -not -path '*/.git/*' -not -path '*/.github/*' -print0 | xargs -0 sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g"
