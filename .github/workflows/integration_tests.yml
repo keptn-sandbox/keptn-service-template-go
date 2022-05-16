@@ -70,7 +70,6 @@ jobs:
         timeout-minutes: 10
         with:
           KEPTN_VERSION: ${{ matrix.keptn-version }}
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
           KEPTN_INSTALL_PARAMETERS: -v --endpoint-service-type=LoadBalancer
 
       - name: Test connection to keptn
