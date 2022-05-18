@@ -71,6 +71,7 @@ jobs:
         with:
           KEPTN_VERSION: ${{ matrix.keptn-version }}
           KEPTN_INSTALL_PARAMETERS: -v --endpoint-service-type=LoadBalancer
+          KUBECONFIG: ${{ env.KUBECONFIG }}
 
       - name: Test connection to keptn
         run: |
