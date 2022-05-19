@@ -7,7 +7,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/keptn/go-utils v0.14.0
 	github.com/keptn/kubernetes-utils v0.14.0
-	github.com/mitchellh/mapstructure v1.1.2
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/stretchr/testify v1.7.1
 	k8s.io/api v0.23.5
 	k8s.io/apimachinery v0.23.5
