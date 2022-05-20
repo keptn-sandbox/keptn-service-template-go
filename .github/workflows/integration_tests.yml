@@ -2,7 +2,7 @@ name: Integration Tests
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron: '0 3 * * 1-5' # run integration tests at 3 AM, monday to friday (1-5)
+    - cron: "0 3 * * 1-5" # run integration tests at 3 AM, monday to friday (1-5)
 
   workflow_dispatch: # run integration tests only when triggered manually
 
@@ -16,24 +16,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        keptn-version: [ "0.14.2", "0.15.0" ] # https://github.com/keptn/keptn/releases
+        keptn-version: ["0.14.2", "0.15.0"] # https://github.com/keptn/keptn/releases
     env:
-      GO_VERSION: 1.17
       GO111MODULE: "on"
       ENABLE_E2E_TEST: true
       BRANCH: ${{ github.head_ref || github.ref_name }}
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
     steps:
-      - name: Install Go
-        uses: actions/setup-go@v3.0.0
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
       - name: Checkout keptn-contrib/keptn-service-template-go
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.0.2
         with:
           repository: keptn-sandbox/keptn-service-template-go
           path: keptn-service-template-go
+
+      - name: Install Go
+        uses: actions/setup-go@v3.1.0
+        with:
+          go-version-file: "go.mod"
 
       # Download artifacts from last CI run
       - name: Download artifacts
