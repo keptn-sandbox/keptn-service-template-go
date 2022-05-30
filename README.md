@@ -1,12 +1,10 @@
 # README
 
-**WARNING**: The service-template is currently incompatible with Keptn 0.14.x and newer.
-
-**BEFORE YOU START**, please be aware that there are more ways to integrate with your service that don't require creating a service from this template, see https://keptn.sh/docs/0.10.x/integrations/how_integrate/ for more details.
+**BEFORE YOU START**, please be aware that there are more ways to integrate with your service that don't require creating a service from this template, see https://keptn.sh/docs/0.14.x/integrations/how_integrate/ for more details.
 
 Examples:
 
-* Webhooks: https://keptn.sh/docs/0.10.x/integrations/webhooks/
+* Webhooks: https://keptn.sh/docs/0.14.x/integrations/webhooks/
 * Job-Executor-Service: https://github.com/keptn-sandbox/job-executor-service
 
 ---
@@ -33,14 +31,14 @@ This implements a keptn-service-template-go for Keptn. If you want to learn more
 
 *Please fill in your versions accordingly*
 
-| Keptn Version | [Keptn-Service-Template-Go Docker Image](https://hub.docker.com/r/keptn-sandbox/keptn-service-template-go/tags) |
-|:-------------:|:---------------------------------------------------------------------------------------------------------------:|
-|    0.6-0.8    |                                  keptn-sandbox/keptn-service-template-go:0.8.3                                  |
-|    0.10.x     |                                 keptn-sandbox/keptn-service-template-go:0.10.0                                  |
-|    0.11.x     |                                 keptn-sandbox/keptn-service-template-go:0.11.4                                  |
-|    0.12.x     |                                 keptn-sandbox/keptn-service-template-go:0.12.2                                  |
-|    0.13.x     |                                 keptn-sandbox/keptn-service-template-go:0.13.0                                  |
-|    0.14.x     |                                 keptn-sandbox/keptn-service-template-go:0.14.0                                  |
+| Keptn Version* | [Keptn-Service-Template-Go Docker Image](https://hub.docker.com/r/keptn-sandbox/keptn-service-template-go/tags) |
+|:--------------:|:---------------------------------------------------------------------------------------------------------------:|
+|   0.6 - 0.8    |                                  keptn-sandbox/keptn-service-template-go:0.8.3                                  |
+|     0.10.x     |                                 keptn-sandbox/keptn-service-template-go:0.10.0                                  |
+|     0.11.x     |                                 keptn-sandbox/keptn-service-template-go:0.11.4                                  |
+|     0.12.x     |                                 keptn-sandbox/keptn-service-template-go:0.12.2                                  |
+|     0.13.x     |                                 keptn-sandbox/keptn-service-template-go:0.13.0                                  |
+|     0.14.x     |                                 keptn-sandbox/keptn-service-template-go:0.14.0                                  |
 
 \* This is the Keptn version we aim to be compatible with. Other versions should work too, but there is no guarantee.
 
