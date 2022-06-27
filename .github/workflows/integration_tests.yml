@@ -22,17 +22,21 @@ jobs:
       ENABLE_E2E_TEST: true
       BRANCH: ${{ github.head_ref || github.ref_name }}
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+      GOPROXY: "https://proxy.golang.org"
     steps:
-      - name: Checkout keptn-contrib/keptn-service-template-go
+      - name: Checkout code
         uses: actions/checkout@v3.0.2
-        with:
-          repository: keptn-sandbox/keptn-service-template-go
-          path: keptn-service-template-go
 
       - name: Install Go
         uses: actions/setup-go@v3.2.0
         with:
           go-version-file: "go.mod"
+
+      - name: Load CI Environment from .ci_env
+        id: load_ci_env
+        uses: c-py/action-dotenv-to-setenv@v3
+        with:
+          env-file: .ci_env
 
       # Download artifacts from last CI run
       - name: Download artifacts
@@ -76,17 +80,20 @@ jobs:
         run: |
           curl -X GET "${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}/v1/metadata" -H  "accept: application/json" -H  "x-token: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}"
 
-      # Install Keptn-Service-Template-Go from downloaded helm chart
-      - name: Install Keptn-Service-Template-Go
+      # Install service from downloaded helm chart
+      - name: Install service
         run: |
-          helm upgrade --install --create-namespace -n keptn keptn-service-template-go \
-            ./dist/helm-charts/keptn-service-template-go-*.tgz \
+          helm upgrade --install --create-namespace -n keptn ${{ env.IMAGE }} \
+            ./dist/helm-charts/*.tgz \
             --wait
+
+      - name: Install gotestsum
+        shell: bash
+        run: go install gotest.tools/gotestsum@latest
 
       - name: Run integration tests
         env:
           KEPTN_ENDPOINT: ${{ steps.install_keptn.outputs.KEPTN_ENDPOINT }}
           KEPTN_API_TOKEN: ${{ steps.install_keptn.outputs.KEPTN_API_TOKEN }}
         shell: bash
-        working-directory: keptn-service-template-go
-        run: go test -race -v ./...
+        run: gotestsum ./test/e2e/...
