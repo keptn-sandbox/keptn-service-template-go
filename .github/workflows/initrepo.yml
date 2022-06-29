@@ -62,7 +62,7 @@ jobs:
           NEW_GO_MODULE=$(echo ${{ github.repositoryUrl }} | sed -rn 's/.*:(\/\/)?(github\.com\/.+)\.git/\2/p')
           go mod edit -module ${NEW_GO_MODULE}
       - name: Install Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v3
         with:
           version: v3.7.1
       - name: Update CODEOWNERS file
