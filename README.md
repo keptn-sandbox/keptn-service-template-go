@@ -15,7 +15,7 @@ Quick start:
 
 1. In case you want to contribute your service to keptn-sandbox or keptn-contrib, make sure you have read and understood the [Contributing Guidelines](https://github.com/keptn-sandbox/contributing).
 1. Click [Use this template](https://github.com/keptn-sandbox/keptn-service-template-go/generate) on top of the repository, or download the repo as a zip-file, extract it into a new folder named after the service you want to create (e.g., simple-service) 
-1. Run GitHub workflow `One-time repository initialization` to tailor deployment files and go modules to the new instance of the keptn service template. This will create a Pull Request containing the necessary changes, review it, adjust if necessary and merge it.
+1. **Required**: Run GitHub workflow `One-time repository initialization` to tailor deployment files and go modules to the new instance of the keptn service template. This will create a Pull Request containing the necessary changes, review it, adjust if necessary and merge it.
 1. Figure out whether your Kubernetes Deployment requires [any RBAC rules or a different service-account](https://github.com/keptn-sandbox/contributing#rbac-guidelines), and adapt [chart/templates/serviceaccount.yaml](chart/templates/serviceaccount.yaml) accordingly for the roles.
 1. Last but not least: Remove this intro within the README file and make sure the README file properly states what this repository is about
 
@@ -88,9 +88,9 @@ Development can be conducted using any GoLang compatible IDE/editor (e.g., Jetbr
 It is recommended to make use of branches as follows:
 
 * `main`/`master` contains the latest potentially unstable version
-* `release-*` contains a stable version of the service (e.g., `release-0.1.0` contains version 0.1.0)
+* releases are handled via git tags (and GitHub releases)
 * create a new branch for any changes that you are working on, e.g., `feature/my-cool-stuff` or `bug/overflow`
-* once ready, create a pull request from that branch back to the `main`/`master` branch
+* once ready, create a pull request from your branch back to the `main`/`master` branch
 
 When writing code, it is recommended to follow the coding style suggested by the [Golang community](https://github.com/golang/go/wiki/CodeReviewComments).
 
@@ -113,9 +113,6 @@ If you want to get more insights into processing those CloudEvents or even defin
 * Build the docker image: `docker build . -t keptn-sandbox/keptn-service-template-go:dev` (Note: Ensure that you use the correct DockerHub account/organization)
 * Run the docker image locally: `docker run --rm -it -p 8080:8080 keptn-sandbox/keptn-service-template-go:dev`
 * Push the docker image to DockerHub: `docker push keptn-sandbox/keptn-service-template-go:dev` (Note: Ensure that you use the correct DockerHub account/organization)
-* Deploy the service using `kubectl`: `kubectl apply -f deploy/`
-* Delete/undeploy the service using `kubectl`: `kubectl delete -f deploy/`
-* Watch the deployment using `kubectl`: `kubectl -n keptn get deployment keptn-service-template-go -o wide`
 * Get logs using `kubectl`: `kubectl -n keptn logs deployment/keptn-service-template-go -f`
 * Watch the deployed pods using `kubectl`: `kubectl -n keptn get pods -l run=keptn-service-template-go`
 * Deploy the service using [Skaffold](https://skaffold.dev/): `skaffold run --default-repo=your-docker-registry --tail` (Note: Replace `your-docker-registry` with your container image registry (defaults to ghcr.io/keptn-sandbox/keptn-service-template-go); also make sure to adapt the image name in [skaffold.yaml](skaffold.yaml))
