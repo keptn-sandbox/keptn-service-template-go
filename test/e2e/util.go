@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/keptn/go-utils/pkg/api/models"
-	keptnutils "github.com/keptn/kubernetes-utils/pkg"
 	"github.com/mitchellh/mapstructure"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	v1 "k8s.io/api/core/v1"
@@ -139,7 +137,6 @@ func createK8sSecret(ctx context.Context, clientset *kubernetes.Clientset, names
 
 // testEnvironment structure holds different structures and information that are commonly used by the E2E test environment
 type testEnvironment struct {
-	K8s         *kubernetes.Clientset
 	API         KeptnAPI
 	EventData   *eventData
 	Event       *models.KeptnContextExtendedCE
@@ -151,11 +148,6 @@ type testEnvironment struct {
 // additionally also the given job configuration is uploaded to Keptn such that simple E2E tests can continue by sending
 // the desired events or continue to customize the project
 func setupE2ETTestEnvironment(t *testing.T, eventJSONFilePath string, shipyardPath string) testEnvironment {
-	// Just test if we can connect to the cluster
-	clientset, err := keptnutils.GetClientset(false)
-	require.NoError(t, err)
-	assert.NotNil(t, clientset)
-
 	// Create a new Keptn api for the use of the E2E test
 	keptnAPI := NewKeptAPI(readKeptnConnectionDetailsFromEnv())
 
@@ -185,7 +177,6 @@ func setupE2ETTestEnvironment(t *testing.T, eventJSONFilePath string, shipyardPa
 	require.NoError(t, err)
 
 	return testEnvironment{
-		K8s:         clientset,
 		API:         keptnAPI,
 		EventData:   eventData,
 		Event:       keptnEvent,
