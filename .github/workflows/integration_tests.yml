@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        keptn-version: ["0.14.2", "0.15.1", "0.16.0"] # https://github.com/keptn/keptn/releases
+        keptn-version: ["0.14.2", "0.15.1", "0.16.1", "0.17.0"] # https://github.com/keptn/keptn/releases
     env:
       GO111MODULE: "on"
       ENABLE_E2E_TEST: true
@@ -122,6 +122,13 @@ jobs:
         with:
           KEPTN_VERSION: ${{ matrix.keptn-version }}
           HELM_VALUES: |
+            # Keptn 0.17 and newer
+            apiGatewayNginx:
+              type: LoadBalancer
+            features:
+              automaticProvisioning:
+                serviceURL: http://keptn-gitea-provisioner-service.default
+            # Keptn 0.16 compatibility
             control-plane:
               apiGatewayNginx:
                 type: LoadBalancer
