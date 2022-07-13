@@ -138,7 +138,7 @@ jobs:
 
       - name: Docker Build
         id: docker_build
-        uses: keptn/gh-automation/.github/actions/docker-build@v1.5.3
+        uses: keptn/gh-automation/.github/actions/docker-build@v1.6.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAGS: |
