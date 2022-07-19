@@ -15,6 +15,8 @@ func NewEventHandler() *EventHandler {
 }
 
 func (g *EventHandler) Execute(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}, *sdk.Error) {
+	k.Logger().Info("Received event")
+
 	// Check the event type and handle the event accordingly. If you only listen to one event this can be skipped!
 	if *event.Type == keptnv2.GetTriggeredEventType(keptnv2.GetSLITaskName) {
 		finishedEventData, err := handleGetSliTriggeredEvent(k, event)
@@ -91,24 +93,25 @@ func handleActionTriggeredEvent(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}
 	}
 
 	k.Logger().Infof("Handling Action Triggered Event: %s", event.ID)
-	k.Logger().Infof("Action=%s\n", actionTriggeredEvent.Action.Action)
+	k.Logger().Infof("Action=%s", actionTriggeredEvent.Action.Action)
 
 	// check if action is supported
 	if actionTriggeredEvent.Action.Action == "action-xyz" {
+		k.Logger().Info("Action remediation triggered")
 		// -----------------------------------------------------
 		// TODO: Implement your remediation action here
 		// -----------------------------------------------------
-		time.Sleep(5 * time.Second) // Example: Wait 5 seconds. Maybe the problem fixes itself.
+		time.Sleep(1 * time.Second) // Example: Wait 5 seconds. Maybe the problem fixes itself.
 
 		// Return finished event
 		finishedEventData := getActionFinishedEvent(keptnv2.ResultPass, keptnv2.StatusSucceeded, *actionTriggeredEvent, "")
+		k.Logger().Infof("Finished event: %o", finishedEventData)
 
 		return finishedEventData, nil
 	} else {
 		k.Logger().Infof("Retrieved unknown action %s, skipping...", actionTriggeredEvent.Action.Action)
 		return nil, nil
 	}
-	return nil, nil
 }
 
 func getSliFinishedEvent(result keptnv2.ResultType, status keptnv2.StatusType, sliTriggeredEvent keptnv2.GetSLITriggeredEventData, message string, sliResult []*keptnv2.SLIResult) keptnv2.GetSLIFinishedEventData {

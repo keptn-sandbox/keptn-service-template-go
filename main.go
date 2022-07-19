@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const eventTypeWildcard = "sh.keptn.event.action.triggered,sh.keptn.event.get-sli.triggered" // Defines the event types the service will listen to
+const eventTypeWildcard = "*" // Defines the event types the service will listen to
 const serviceName = "keptn-service-template-go"
 const envVarLogLevel = "LOG_LEVEL"
 

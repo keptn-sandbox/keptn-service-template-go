@@ -44,7 +44,7 @@ spec:
             - containerPort: 80
           env:
           - name: CONFIGURATION_SERVICE
-            value: "http://localhost:8081/configuration-service"
+            value: "http://configuration-service:8080"
           - name: env
             value: 'production'
           {{- if .Values.remoteControlPlane.enabled }}
