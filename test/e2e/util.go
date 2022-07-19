@@ -197,7 +197,7 @@ func requireWaitForEvent(t *testing.T, api KeptnAPI, waitFor time.Duration, tick
 		// the source of the event matches the job executor, if that is the case
 		// the event can be checked by the eventValidator
 		for _, event := range events {
-			log.Printf("Event: %v", event)
+			log.Printf("Event type: %s, Event source %s", *event.Type, *event.Source)
 			if *event.Type == eventType && *event.Source == source {
 				if eventValidator(event) {
 					return true
