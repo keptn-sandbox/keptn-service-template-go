@@ -1,8 +1,8 @@
 {
   "data": {
     "action": {
-      "name": "FeatureToggle",
-      "action": "toggle-feature",
+      "name": "action-xyz",
+      "action": "action-xyz",
       "description": "toggle a feature",
       "value": {
         "EnableItemCache": "on"

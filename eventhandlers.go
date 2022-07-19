@@ -23,8 +23,8 @@ func (g *EventHandler) Execute(k sdk.IKeptn, event sdk.KeptnEvent) (interface{},
 			return nil, err
 		}
 		return finishedEventData, nil
-	} else if *event.Type == keptnv2.GetTriggeredEventType(keptnv2.GetActionTaskName) {
-		finishedEventData, err := HandleActionTriggeredEvent(k, event)
+	} else if *event.Type == keptnv2.GetTriggeredEventType(keptnv2.ActionTaskName) {
+		finishedEventData, err := handleActionTriggeredEvent(k, event)
 
 		if err != nil {
 			return nil, err
@@ -62,7 +62,7 @@ func handleGetSliTriggeredEvent(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}
 		return nil, &sdk.Error{Err: err, StatusType: keptnv2.StatusErrored, ResultType: keptnv2.ResultFailed, Message: "error while fetching SLI file: " + err.Error()}
 	}
 
-	k.Logger().Info(sliConfigFileContent)
+	k.Logger().Infof("SLI config content: %s", sliConfigFileContent)
 
 	// TODO: Implement your functionality here
 	indicators := sliTriggeredEvent.GetSLI.Indicators
@@ -83,7 +83,7 @@ func handleGetSliTriggeredEvent(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}
 
 // HandleActionTriggeredEvent handles action.triggered events
 // TODO: Add in your handler code
-func HandleActionTriggeredEvent(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}, *sdk.Error) {
+func handleActionTriggeredEvent(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}, *sdk.Error) {
 	actionTriggeredEvent := &keptnv2.ActionTriggeredEventData{}
 
 	if err := keptnv2.Decode(event.Data, actionTriggeredEvent); err != nil {

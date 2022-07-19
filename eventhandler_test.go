@@ -93,12 +93,12 @@ func Test_Receiving_GetSliTriggeredEvent(t *testing.T) {
 	fakeKeptn := sdk.NewFakeKeptn("test-service-template-svc")
 	fakeKeptn.AddTaskHandler("sh.keptn.event.get-sli.triggered", NewEventHandler())
 
-	fakeKeptn.NewEvent(newEvent("get_sli_triggered.json"))
+	fakeKeptn.NewEvent(newEvent("test/events/get_sli_triggered.json"))
 
 	fakeKeptn.AssertNumberOfEventSent(t, 2)
 
-	fakeKeptn.AssertSentEventType(t, 0, keptnv2.GetStartedEventType("action"))
-	fakeKeptn.AssertSentEventType(t, 1, keptnv2.GetFinishedEventType("action"))
+	fakeKeptn.AssertSentEventType(t, 0, keptnv2.GetStartedEventType("get-sli"))
+	fakeKeptn.AssertSentEventType(t, 1, keptnv2.GetFinishedEventType("get-sli"))
 
 	fakeKeptn.AssertSentEventStatus(t, 1, keptnv2.StatusSucceeded)
 	fakeKeptn.AssertSentEventResult(t, 1, keptnv2.ResultPass)
