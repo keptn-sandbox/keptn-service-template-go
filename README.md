@@ -4,7 +4,7 @@
 
 Examples:
 
-* Webhooks: https://keptn.sh/docs/0.14.x/integrations/webhooks/
+* Webhooks: https://keptn.sh/docs/0.17.x/integrations/webhooks/
 * Job-Executor-Service: https://github.com/keptn-sandbox/job-executor-service
 
 ---
@@ -33,9 +33,9 @@ This implements a keptn-service-template-go for Keptn. If you want to learn more
 
 | Keptn Version* | [Keptn-service-template-go version](https://github.com/keptn-sandbox/keptn-service-template-go/releases) |
 |:--------------:|:--------------------------------------------------------------------------------------------------------:|
-|     0.13.x     |                              0.13.0                              |
-|     0.14.x     |                              0.14.0                              |
-|     0.17.x     |                              0.17.0                              |
+|     0.13.x     |                                                  0.13.0                                                  |
+|     0.14.x     |                                                  0.14.0                                                  |
+|     0.17.x     |                                                  0.17.0                                                  |
 
 
 \* This is the Keptn version we aim to be compatible with. Other versions should work too, but there is no guarantee.
@@ -56,7 +56,7 @@ for example:
 helm install -n keptn keptn-service-template-go chart/
 ```
 
-This should install the `keptn-service-template-go` together with a Keptn `distributor` into the `keptn` namespace, which you can verify using
+This should install the `keptn-service-template-go` into the `keptn` namespace, which you can verify using
 
 ```console
 kubectl -n keptn get deployment keptn-service-template-go -o wide

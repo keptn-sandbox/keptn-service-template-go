@@ -1,0 +1,36 @@
+{
+  "data": {
+    "action": {
+      "name": "FeatureToggle",
+      "action": "toggle-feature",
+      "description": "toggle a feature",
+      "value": {
+        "EnableItemCache": "on"
+      }
+    },
+    "problem": {
+      "ImpactedEntity": "carts-primary",
+      "PID": "93a5-3fas-a09d-8ckf",
+      "ProblemDetails": "Pod name",
+      "ProblemID": "762",
+      "ProblemTitle": "cpu_usage_sockshop_carts",
+      "State": "OPEN"
+    },
+    "project": "sockshop",
+    "stage": "staging",
+    "service": "carts",
+    "labels": {
+      "testid": "12345",
+      "buildnr": "build17",
+      "runby": "JohnDoe"
+    }
+  },
+  "gitcommitid": "fcd887b60ab61467f58071fd1718c8d70e7246a4",
+  "id": "6f14d952-3729-4605-915f-12ff84f0e5f1",
+  "shkeptncontext": "cdba1c70-e3e7-441d-8115-e6c9c2d6477b",
+  "shkeptnspecversion": "0.2.4",
+  "source": "shipyard-controller",
+  "specversion": "1.0",
+  "time": "2022-06-05T08:35:18.907Z",
+  "type": "sh.keptn.event.action.triggered"
+}

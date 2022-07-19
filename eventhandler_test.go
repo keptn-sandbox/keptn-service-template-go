@@ -2,178 +2,104 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/keptn/go-utils/pkg/lib/v0_2_0/fake"
-	"io/ioutil"
-	"testing"
-
-	keptn "github.com/keptn/go-utils/pkg/lib/keptn"
+	keptnapi "github.com/keptn/go-utils/pkg/api/models"
 	keptnv2 "github.com/keptn/go-utils/pkg/lib/v0_2_0"
-
-	cloudevents "github.com/cloudevents/sdk-go/v2" // make sure to use v2 cloudevents here
+	"github.com/keptn/go-utils/pkg/sdk"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
 )
 
-/**
- * loads a cloud event from the passed test json file and initializes a keptn object with it
- */
-func initializeTestObjects(eventFileName string) (*keptnv2.Keptn, *cloudevents.Event, error) {
-	// load sample event
-	eventFile, err := ioutil.ReadFile(eventFileName)
+func newEvent(filename string) keptnapi.KeptnContextExtendedCE {
+	content, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, nil, fmt.Errorf("Cant load %s: %s", eventFileName, err.Error())
+		log.Fatal(err)
 	}
-
-	incomingEvent := &cloudevents.Event{}
-	err = json.Unmarshal(eventFile, incomingEvent)
-	if err != nil {
-		return nil, nil, fmt.Errorf("Error parsing: %s", err.Error())
-	}
-
-	// Add a Fake EventSender to KeptnOptions
-	var keptnOptions = keptn.KeptnOpts{
-		EventSender: &fake.EventSender{},
-	}
-	keptnOptions.UseLocalFileSystem = true
-	myKeptn, err := keptnv2.NewKeptn(incomingEvent, keptnOptions)
-
-	return myKeptn, incomingEvent, err
+	event := keptnapi.KeptnContextExtendedCE{}
+	err = json.Unmarshal(content, &event)
+	_ = err
+	return event
 }
 
-// Tests HandleActionTriggeredEvent
-// TODO: Add your test-code
-func TestHandleActionTriggeredEvent(t *testing.T) {
-	myKeptn, incomingEvent, err := initializeTestObjects("test-events/action.triggered.json")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+func Test_Receiving_GetActionTriggeredEvent(t *testing.T) {
+	ch := make(chan *keptnapi.KeptnContextExtendedCE)
 
-	specificEvent := &keptnv2.ActionTriggeredEventData{}
-	err = incomingEvent.DataAs(specificEvent)
-	if err != nil {
-		t.Errorf("Error getting keptn event data")
-	}
+	var returnedStatusCode = 200
+	ts := httptest.NewServer(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("Content-Type", "application/json")
+			if strings.Contains(r.URL.String(), "/admin/features/") {
+				w.WriteHeader(returnedStatusCode)
+				w.Write([]byte(`{}`))
+				return
+			}
 
-	err = HandleActionTriggeredEvent(myKeptn, *incomingEvent, specificEvent)
-	if err != nil {
-		t.Errorf("Error: " + err.Error())
-	}
+			defer r.Body.Close()
+			body, _ := ioutil.ReadAll(r.Body)
+			keptnCE := &keptnapi.KeptnContextExtendedCE{}
 
-	gotEvents := len(myKeptn.EventSender.(*fake.EventSender).SentEvents)
+			_ = json.Unmarshal(body, keptnCE)
 
-	// Verify that HandleGetSliTriggeredEvent has sent 2 cloudevents
-	if gotEvents != 2 {
-		t.Errorf("Expected two events to be sent, but got %v", gotEvents)
-	}
+			w.WriteHeader(returnedStatusCode)
+			w.Write([]byte(`{}`))
+			go func() { ch <- keptnCE }()
+		}),
+	)
+	defer ts.Close()
 
-	// Verify that the first CE sent is a .started event
-	if keptnv2.GetStartedEventType(keptnv2.ActionTaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[0].Type() {
-		t.Errorf("Expected a action.started event type")
-	}
+	fakeKeptn := sdk.NewFakeKeptn("test-service-template-svc")
+	fakeKeptn.AddTaskHandler("sh.keptn.event.action.triggered", NewEventHandler())
 
-	// Verify that the second CE sent is a .finished event
-	if keptnv2.GetFinishedEventType(keptnv2.ActionTaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[1].Type() {
-		t.Errorf("Expected a action.finished event type")
-	}
+	fakeKeptn.NewEvent(newEvent("test/events/action_triggered.json"))
+
+	fakeKeptn.AssertNumberOfEventSent(t, 2)
+
+	fakeKeptn.AssertSentEventType(t, 0, keptnv2.GetStartedEventType("action"))
+	fakeKeptn.AssertSentEventType(t, 1, keptnv2.GetFinishedEventType("action"))
+
+	fakeKeptn.AssertSentEventStatus(t, 1, keptnv2.StatusSucceeded)
+	fakeKeptn.AssertSentEventResult(t, 1, keptnv2.ResultPass)
 }
 
-// Tests HandleDeploymentTriggeredEvent
-// TODO: Add your test-code
-func TestHandleDeploymentTriggeredEvent(t *testing.T) {
-	myKeptn, incomingEvent, err := initializeTestObjects("test-events/evaluation.triggered.json")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+func Test_Receiving_GetSliTriggeredEvent(t *testing.T) {
+	ch := make(chan *keptnapi.KeptnContextExtendedCE)
 
-	specificEvent := &keptnv2.DeploymentTriggeredEventData{}
-	err = incomingEvent.DataAs(specificEvent)
-	if err != nil {
-		t.Errorf("Error getting keptn event data")
-	}
+	var returnedStatusCode = 200
+	ts := httptest.NewServer(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("Content-Type", "application/json")
+			if strings.Contains(r.URL.String(), "/admin/features/") {
+				w.WriteHeader(returnedStatusCode)
+				w.Write([]byte(`{}`))
+				return
+			}
 
-	err = HandleDeploymentTriggeredEvent(myKeptn, *incomingEvent, specificEvent)
-	if err != nil {
-		t.Errorf("Error: " + err.Error())
-	}
-}
+			defer r.Body.Close()
+			body, _ := ioutil.ReadAll(r.Body)
+			keptnCE := &keptnapi.KeptnContextExtendedCE{}
 
-// Tests HandleEvaluationTriggeredEvent
-// TODO: Add your test-code
-func TestHandleEvaluationTriggeredEvent(t *testing.T) {
-	myKeptn, incomingEvent, err := initializeTestObjects("test-events/evaluation.triggered.json")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+			_ = json.Unmarshal(body, keptnCE)
 
-	specificEvent := &keptnv2.EvaluationTriggeredEventData{}
-	err = incomingEvent.DataAs(specificEvent)
-	if err != nil {
-		t.Errorf("Error getting keptn event data")
-	}
+			w.WriteHeader(returnedStatusCode)
+			w.Write([]byte(`{}`))
+			go func() { ch <- keptnCE }()
+		}),
+	)
+	defer ts.Close()
 
-	err = HandleEvaluationTriggeredEvent(myKeptn, *incomingEvent, specificEvent)
-	if err != nil {
-		t.Errorf("Error: " + err.Error())
-	}
-}
+	fakeKeptn := sdk.NewFakeKeptn("test-service-template-svc")
+	fakeKeptn.AddTaskHandler("sh.keptn.event.get-sli.triggered", NewEventHandler())
 
-// Tests the HandleGetSliTriggeredEvent Handler
-// TODO: Add your test-code
-func TestHandleGetSliTriggered(t *testing.T) {
-	myKeptn, incomingEvent, err := initializeTestObjects("test-events/get-sli.triggered.json")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	fakeKeptn.NewEvent(newEvent("get_sli_triggered.json"))
 
-	specificEvent := &keptnv2.GetSLITriggeredEventData{}
-	err = incomingEvent.DataAs(specificEvent)
-	if err != nil {
-		t.Errorf("Error getting keptn event data")
-	}
+	fakeKeptn.AssertNumberOfEventSent(t, 2)
 
-	err = HandleGetSliTriggeredEvent(myKeptn, *incomingEvent, specificEvent)
-	if err != nil {
-		t.Errorf("Error: " + err.Error())
-	}
+	fakeKeptn.AssertSentEventType(t, 0, keptnv2.GetStartedEventType("action"))
+	fakeKeptn.AssertSentEventType(t, 1, keptnv2.GetFinishedEventType("action"))
 
-	gotEvents := len(myKeptn.EventSender.(*fake.EventSender).SentEvents)
-
-	// Verify that HandleGetSliTriggeredEvent has sent 2 cloudevents
-	if gotEvents != 2 {
-		t.Errorf("Expected two events to be sent, but got %v", gotEvents)
-	}
-
-	// Verify that the first CE sent is a .started event
-	if keptnv2.GetStartedEventType(keptnv2.GetSLITaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[0].Type() {
-		t.Errorf("Expected a get-sli.started event type")
-	}
-
-	// Verify that the second CE sent is a .finished event
-	if keptnv2.GetFinishedEventType(keptnv2.GetSLITaskName) != myKeptn.EventSender.(*fake.EventSender).SentEvents[1].Type() {
-		t.Errorf("Expected a get-sli.finished event type")
-	}
-}
-
-// Tests the HandleReleaseTriggeredEvent Handler
-// TODO: Add your test-code
-func TestHandleReleaseTriggeredEvent(t *testing.T) {
-	myKeptn, incomingEvent, err := initializeTestObjects("test-events/release.triggered.json")
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	specificEvent := &keptnv2.ReleaseTriggeredEventData{}
-	err = incomingEvent.DataAs(specificEvent)
-	if err != nil {
-		t.Errorf("Error getting keptn event data")
-	}
-
-	err = HandleReleaseTriggeredEvent(myKeptn, *incomingEvent, specificEvent)
-	if err != nil {
-		t.Errorf("Error: " + err.Error())
-	}
+	fakeKeptn.AssertSentEventStatus(t, 1, keptnv2.StatusSucceeded)
+	fakeKeptn.AssertSentEventResult(t, 1, keptnv2.ResultPass)
 }
