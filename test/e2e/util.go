@@ -11,6 +11,7 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"log"
 	"os"
 	"strconv"
 	"testing"
@@ -196,6 +197,7 @@ func requireWaitForEvent(t *testing.T, api KeptnAPI, waitFor time.Duration, tick
 		// the source of the event matches the job executor, if that is the case
 		// the event can be checked by the eventValidator
 		for _, event := range events {
+			log.Printf("Event: %v", event)
 			if *event.Type == eventType && *event.Source == source {
 				if eventValidator(event) {
 					return true
