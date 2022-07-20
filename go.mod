@@ -1,4 +1,4 @@
-module example.com/keptn-service-template-go
+module github.com/keptn-service-template-go
 
 go 1.17
 

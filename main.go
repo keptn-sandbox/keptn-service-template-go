@@ -1,13 +1,15 @@
 package main
 
 import (
+	"github.com/keptn-service-template-go/handler"
 	"github.com/keptn/go-utils/pkg/sdk"
 	"github.com/sirupsen/logrus"
 	"log"
 	"os"
 )
 
-const eventTypeWildcard = "*" // Defines the event types the service will listen to
+const getSliTriggeredEvent = "sh.keptn.event.get-sli.triggered"
+const actionTriggeredEvent = "sh.keptn.event.action.triggered"
 const serviceName = "keptn-service-template-go"
 const envVarLogLevel = "LOG_LEVEL"
 
@@ -25,8 +27,11 @@ func main() {
 	log.Fatal(sdk.NewKeptn(
 		serviceName,
 		sdk.WithTaskHandler(
-			eventTypeWildcard,
-			NewEventHandler()),
+			actionTriggeredEvent,
+			handler.NewActionTriggeredEventHandler()),
+		sdk.WithTaskHandler(
+			getSliTriggeredEvent,
+			handler.NewGetSliEventHandler()),
 		sdk.WithLogger(logrus.New()),
 	).Start())
 }
