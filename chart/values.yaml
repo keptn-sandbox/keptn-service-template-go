@@ -10,7 +10,7 @@ remoteControlPlane:
   enabled: false                             # Enables remote execution plane mode
   api:
     protocol: "http"                        # Used Protocol (http, https)
-    hostname: ""                            # Hostname of the control plane cluster (and Port)
+    hostname: "api-gateway-nginx.keptn"      # Hostname of the control plane cluster (and Port)
     apiValidateTls: true                     # Defines if the control plane certificate should be validated
     token: ""                                # Keptn API Token
 

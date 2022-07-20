@@ -6,17 +6,17 @@ import (
 	"github.com/keptn/go-utils/pkg/sdk"
 )
 
-type getSliEventHandler struct {
+type GetSliEventHandler struct {
 }
 
-func NewGetSliEventHandler() *getSliEventHandler {
-	return &getSliEventHandler{}
+func NewGetSliEventHandler() *GetSliEventHandler {
+	return &GetSliEventHandler{}
 }
 
 // Execute handles get-sli.triggered events if SLIProvider == keptn-service-template-go
 // This function acts as an example showing how to handle get-sli events
 // TODO: Adapt handler code to your needs
-func (g *getSliEventHandler) Execute(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}, *sdk.Error) {
+func (g *GetSliEventHandler) Execute(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}, *sdk.Error) {
 	k.Logger().Infof("Handling get-sli.triggered Event: %s", event.ID)
 
 	sliTriggeredEvent := &keptnv2.GetSLITriggeredEventData{}

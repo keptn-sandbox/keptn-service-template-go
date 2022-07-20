@@ -6,16 +6,16 @@ import (
 	"time"
 )
 
-type actionTriggeredEventHandler struct {
+type ActionTriggeredEventHandler struct {
 }
 
-func NewActionTriggeredEventHandler() *actionTriggeredEventHandler {
-	return &actionTriggeredEventHandler{}
+func NewActionTriggeredEventHandler() *ActionTriggeredEventHandler {
+	return &ActionTriggeredEventHandler{}
 }
 
 // Execute handles action.triggered events
 // TODO: Add in your handler code
-func (g *actionTriggeredEventHandler) Execute(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}, *sdk.Error) {
+func (g *ActionTriggeredEventHandler) Execute(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}, *sdk.Error) {
 	k.Logger().Infof("Handling Action Triggered Event: %s", event.ID)
 	actionTriggeredEvent := &keptnv2.ActionTriggeredEventData{}
 
@@ -37,10 +37,10 @@ func (g *actionTriggeredEventHandler) Execute(k sdk.IKeptn, event sdk.KeptnEvent
 		finishedEventData := getActionFinishedEvent(keptnv2.ResultPass, keptnv2.StatusSucceeded, *actionTriggeredEvent, "")
 
 		return finishedEventData, nil
-	} else {
-		k.Logger().Infof("Retrieved unknown action %s, skipping...", actionTriggeredEvent.Action.Action)
-		return nil, nil
 	}
+
+	k.Logger().Infof("Retrieved unknown action %s, skipping...", actionTriggeredEvent.Action.Action)
+	return nil, nil
 }
 
 func getActionFinishedEvent(result keptnv2.ResultType, status keptnv2.StatusType, actionTriggeredEvent keptnv2.ActionTriggeredEventData, message string) keptnv2.ActionFinishedEventData {
