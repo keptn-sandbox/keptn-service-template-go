@@ -24,6 +24,8 @@ func main() {
 		}
 	}
 
+	log.Println("Starting keptn-service-template-go")
+
 	log.Fatal(sdk.NewKeptn(
 		serviceName,
 		sdk.WithTaskHandler(

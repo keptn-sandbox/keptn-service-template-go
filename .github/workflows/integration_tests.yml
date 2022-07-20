@@ -174,7 +174,7 @@ jobs:
           kubectl logs -n keptn -l app.kubernetes.io/instance=keptn-service-template-go --prefix=true --previous=false --all-containers > k8s_debug/service_template_logs.txt || true
           kubectl logs -n keptn -l app.kubernetes.io/instance=keptn-service-template-go --prefix=true --previous=true --all-containers > k8s_debug/service_template_logs_previous.txt || true
           kubectl describe pod -n keptn -l app.kubernetes.io/instance=keptn-service-template-go > k8s_debug/keptn_service_template_describe.txt || true
-          kubectl logs deployment/keptn-service-template-go -n keptn > keptn_service_template_deployment_logs.txt || true
+          kubectl logs deployment/keptn-service-template-go -n keptn > k8s_debug/keptn_service_template_deployment_logs.txt || true
           kubectl logs deployment/keptn-gitea-provisioner-service --prefix=true --previous=false --all-containers > k8s_debug/k8s_gitea_provisioner_logs.txt || true
           kubectl get statefulsets,configmaps,pods,networkpolicy,serviceaccounts,role,rolebindings,events,services -n ${GITEA_NAMESPACE} -o json > k8s_debug/k8s_objects_gitea.json
           kubectl logs statefulsets/gitea --prefix=true --previous=false --all-containers -n ${GITEA_NAMESPACE} > k8s_debug/k8s_logs_gitea.txt || true

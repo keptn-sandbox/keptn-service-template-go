@@ -16,13 +16,13 @@ func NewActionTriggeredEventHandler() *actionTriggeredEventHandler {
 // Execute handles action.triggered events
 // TODO: Add in your handler code
 func (g *actionTriggeredEventHandler) Execute(k sdk.IKeptn, event sdk.KeptnEvent) (interface{}, *sdk.Error) {
+	k.Logger().Infof("Handling Action Triggered Event: %s", event.ID)
 	actionTriggeredEvent := &keptnv2.ActionTriggeredEventData{}
 
 	if err := keptnv2.Decode(event.Data, actionTriggeredEvent); err != nil {
 		return nil, &sdk.Error{Err: err, StatusType: keptnv2.StatusErrored, ResultType: keptnv2.ResultFailed, Message: "failed to decode action.triggered event: " + err.Error()}
 	}
 
-	k.Logger().Infof("Handling Action Triggered Event: %s", event.ID)
 	k.Logger().Infof("Action=%s", actionTriggeredEvent.Action.Action)
 
 	// check if action is supported
