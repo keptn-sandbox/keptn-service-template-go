@@ -35,7 +35,6 @@ func (g *actionTriggeredEventHandler) Execute(k sdk.IKeptn, event sdk.KeptnEvent
 
 		// Return finished event
 		finishedEventData := getActionFinishedEvent(keptnv2.ResultPass, keptnv2.StatusSucceeded, *actionTriggeredEvent, "")
-		k.Logger().Infof("Finished event: %o", finishedEventData)
 
 		return finishedEventData, nil
 	} else {

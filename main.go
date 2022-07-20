@@ -24,7 +24,7 @@ func main() {
 		}
 	}
 
-	log.Println("Starting keptn-service-template-go")
+	log.Printf("Starting %s", serviceName)
 
 	log.Fatal(sdk.NewKeptn(
 		serviceName,
