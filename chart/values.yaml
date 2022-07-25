@@ -4,6 +4,8 @@ image:
   tag: ""                                    # Container Tag
 service:
   enabled: true                              # Creates a Kubernetes Service for the keptn-service-template-go
+
+subscription:
   pubsubTopic: "sh.keptn.>"                  # Sets the events the service subscribes to
 
 remoteControlPlane:
