@@ -31,3 +31,4 @@ The following table lists the configurable parameters of the keptn-service-templ
 | `nodeSelector`                          | Node selector configuration                                    | `{}`                                                |
 | `tolerations`                           | Tolerations for the pods                                       | `[]`                                                |
 | `affinity`                              | Affinity rules                                                 | `{}`                                                |
+| `subscription.pubsubTopic`              | Sets the events the service subscribes to                      | `"sh.keptn.>"`                                      |
