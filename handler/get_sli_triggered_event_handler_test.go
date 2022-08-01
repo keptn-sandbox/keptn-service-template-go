@@ -13,8 +13,6 @@ import (
 )
 
 func Test_Receiving_GetSliTriggeredEvent(t *testing.T) {
-	ch := make(chan *keptnapi.KeptnContextExtendedCE)
-
 	var returnedStatusCode = 200
 	ts := httptest.NewServer(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +31,6 @@ func Test_Receiving_GetSliTriggeredEvent(t *testing.T) {
 
 			w.WriteHeader(returnedStatusCode)
 			w.Write([]byte(`{}`))
-			go func() { ch <- keptnCE }()
 		}),
 	)
 	defer ts.Close()

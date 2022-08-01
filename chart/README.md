@@ -18,7 +18,6 @@ The following table lists the configurable parameters of the keptn-service-templ
 | `remoteControlPlane.enabled`            | Enables remote execution plane mode                            | `false`                                             |
 | `remoteControlPlane.api.protocol`       | Used protocol (http, https                                     | `"https"`                                           |
 | `remoteControlPlane.api.hostname`       | Hostname of the control plane cluster (and port)               | `""`                                                |
-| `remoteControlPlane.api.apiValidateTls` | Defines if the control plane certificate should be validated   | `true`                                              |
 | `remoteControlPlane.api.token`          | Keptn api token                                                | `""`                                                |
 | `imagePullSecrets`                      | Secrets to use for container registry credentials              | `[]`                                                |
 | `serviceAccount.create`                 | Enables the service account creation                           | `true`                                              |

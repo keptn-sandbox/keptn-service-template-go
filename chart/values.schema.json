@@ -54,9 +54,6 @@
                   "https"
                 ]
               },
-              "apiValidateTls": {
-                "type": "boolean"
-              },
               "token": {
                 "pattern": "^[A-Za-z0-9-.]{2,63}$"
               }
