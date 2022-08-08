@@ -13,7 +13,7 @@ jobs:
   release:
     needs: test
     name: Release
-    uses: keptn/gh-automation/.github/workflows/release-integration.yml@v1.5.3
+    uses: keptn/gh-automation/.github/workflows/release-integration.yml@v1.6.0
 
   docker_build:
     needs: [release]
@@ -39,7 +39,7 @@ jobs:
           script: return '${{ github.repository_owner }}'.toLowerCase()
 
       - name: Docker Build
-        uses: keptn/gh-automation/.github/actions/docker-build@v1.5.3
+        uses: keptn/gh-automation/.github/actions/docker-build@v1.6.0
         with:
           TAGS: |
             ghcr.io/${{ steps.repo_slug.outputs.result }}/${{ env.IMAGE }}:${{ env.VERSION }}
