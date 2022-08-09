@@ -75,6 +75,8 @@ spec:
             value: "{{ .Values.remoteControlPlane.api.protocol }}://{{ .Values.remoteControlPlane.api.hostname }}/api"
           - name: KEPTN_API_TOKEN
             value: "{{ .Values.remoteControlPlane.api.token }}"
+          - name: HTTP_SSL_VERIFY
+            value: "{{ .Values.remoteControlPlane.api.apiValidateTls | default "true" }}"
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

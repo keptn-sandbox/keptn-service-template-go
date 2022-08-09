@@ -14,6 +14,7 @@ remoteControlPlane:
     protocol: "http"                        # Used Protocol (http, https)
     hostname: "api-gateway-nginx.keptn"      # Hostname of the control plane cluster (and Port)
     token: ""                                # Keptn API Token
+    apiValidateTls: true                     # Defines if the control plane certificate should be validated
 
 imagePullSecrets: []                         # Secrets to use for container registry credentials
 
