@@ -117,7 +117,7 @@ jobs:
 
       - name: Install Keptn
         id: install_keptn
-        uses: keptn-sandbox/action-install-keptn@v2.0.0
+        uses: keptn-sandbox/action-install-keptn@v3.0.0
         timeout-minutes: 5
         with:
           KEPTN_VERSION: ${{ matrix.keptn-version }}
@@ -169,7 +169,12 @@ jobs:
           kubectl describe nodes > k8s_debug/k8s_describe_nodes.txt
           kubectl cluster-info dump > k8s_debug/k8s_cluster_info_dump.txt
           kubectl get all -n keptn -o json > k8s_debug/k8s_keptn_objects.json
+          kubectl get events -n keptn --sort-by='.metadata.creationTimestamp' -A > k8s_debug/keptn_events.txt
           kubectl logs -n keptn -l app.kubernetes.io/instance=keptn --prefix=true --previous=false --all-containers > k8s_debug/k8s_keptn_logs.txt || true
+          kubectl logs -n keptn -l app.kubernetes.io/instance=keptn-service-template-go --prefix=true --previous=false --all-containers > k8s_debug/service_template_logs.txt || true
+          kubectl logs -n keptn -l app.kubernetes.io/instance=keptn-service-template-go --prefix=true --previous=true --all-containers > k8s_debug/service_template_logs_previous.txt || true
+          kubectl describe pod -n keptn -l app.kubernetes.io/instance=keptn-service-template-go > k8s_debug/keptn_service_template_describe.txt || true
+          kubectl logs deployment/keptn-service-template-go -n keptn > k8s_debug/keptn_service_template_deployment_logs.txt || true
           kubectl logs deployment/keptn-gitea-provisioner-service --prefix=true --previous=false --all-containers > k8s_debug/k8s_gitea_provisioner_logs.txt || true
           kubectl get statefulsets,configmaps,pods,networkpolicy,serviceaccounts,role,rolebindings,events,services -n ${GITEA_NAMESPACE} -o json > k8s_debug/k8s_objects_gitea.json
           kubectl logs statefulsets/gitea --prefix=true --previous=false --all-containers -n ${GITEA_NAMESPACE} > k8s_debug/k8s_logs_gitea.txt || true
