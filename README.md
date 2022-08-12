@@ -1,11 +1,16 @@
 # README
 
-**BEFORE YOU START**, please be aware that there are more ways to integrate with your service that don't require creating a service from this template, see https://keptn.sh/docs/0.14.x/integrations/how_integrate/ for more details.
+**PLEASE CONSIDER USING ALTERNATIVE WAYS OF CREATING YOUR KEPTN INTEGRATION**.
+
+There are more ways to integrate with your service that don't require creating a service from this template, see https://keptn.sh/docs/0.17.x/integrations/how_integrate/ for more details.
 
 Examples:
 
 * Webhooks: https://keptn.sh/docs/0.17.x/integrations/webhooks/
 * Job-Executor-Service: https://github.com/keptn-sandbox/job-executor-service
+
+In addition, creating your own integration based on the service-template has been reduced to just using [Keptn's go-utils]( https://github.com/keptn/go-utils/)
+and is based on [**the example provided in go-utils**](https://github.com/keptn/go-utils/tree/master/examples/go-sdk).
 
 ---
 
@@ -94,15 +99,14 @@ When writing code, it is recommended to follow the coding style suggested by the
 
 ### Where to start
 
-If you don't care about the details, your first entrypoint is [eventhandlers.go](eventhandlers.go). Within this file 
- you can add implementation for pre-defined Keptn Cloud events.
- 
+Please read the documentation provided by [Keptn/go-utils](https://github.com/keptn/go-utils/tree/master/examples/go-sdk), as it explains how to integrate with Keptn.
+
 To better understand all variants of Keptn CloudEvents, please look at the [Keptn Spec](https://github.com/keptn/spec).
  
-If you want to get more insights into processing those CloudEvents or even defining your own CloudEvents in code, please 
- look into [main.go](main.go) (specifically `processKeptnCloudEvent`), [chart/values.yaml](chart/values.yaml),
- consult the [Keptn docs](https://keptn.sh/docs/) as well as existing [Keptn Core](https://github.com/keptn/keptn) and
- [Keptn Contrib](https://github.com/keptn-contrib/) services.
+If you want to look at handler implementations, you can take a look at the [go-utils based example](https://github.com/keptn/go-utils/blob/master/examples/go-sdk/handler.go), 
+as well as the concrete implementations within the [handler/](handler/) folder, e.g.:
+* [action-triggered](handler/action_triggered_event_handler.go)
+* [get-sli-triggered](handler/get_sli_triggered_event_handler.go)
 
 ### Common tasks
 
@@ -136,11 +140,7 @@ You can find the details in [.github/workflows/CI.yml](.github/workflows/CI.yml)
 
 ### GH Actions/Workflow: Build Docker Images
 
-This repo uses GH Actions and Workflows to test the code and automatically build docker images.
-
-Docker Images are automatically pushed based on the configuration done in [.ci_env](.ci_env) and the two [GitHub Secrets](https://github.com/keptn-sandbox/keptn-service-template-go/settings/secrets/actions)
-* `REGISTRY_USER` - your DockerHub username
-* `REGISTRY_PASSWORD` - a DockerHub [access token](https://hub.docker.com/settings/security) (alternatively, your DockerHub password)
+This repo uses GH Actions and Workflows to test the code and automatically build containers and upload it to `ghcr.io`.
 
 ## How to release a new version of this service
 
