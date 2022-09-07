@@ -44,7 +44,7 @@ jobs:
           NEW_SERVICE_NAME=$(echo ${{ github.repository }} | sed -e 's/${{ github.repository_owner }}\///')
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g')
           ESCAPED_REPLACE=$(printf '%s\n' "$NEW_SERVICE_NAME" | sed -e 's/[\/&]/\\&/g') 
-          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" .ci_env .gitignore Dockerfile main.go eventhandlers.go eventhandler_test.go test-events/*.json
+          sed -i "s/${ESCAPED_ORIGINAL}/${ESCAPED_REPLACE}/g" .ci_env .gitignore Dockerfile main.go handler/*.go test-events/*.json
       - name: Update README.md
         run: |
           ESCAPED_ORIGINAL=$(printf '%s\n' "$ORIGINAL_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[\/&]/\\&/g')
