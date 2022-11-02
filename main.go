@@ -34,6 +34,6 @@ func main() {
 		sdk.WithTaskHandler(
 			getSliTriggeredEvent,
 			handler.NewGetSliEventHandler()),
-		sdk.WithLogger(logrus.New()),
+		sdk.WithLogger(logrus.StandardLogger()),
 	).Start())
 }
