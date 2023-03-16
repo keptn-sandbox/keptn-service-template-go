@@ -32,7 +32,7 @@ jobs:
           env-file: .ci_env
 
       - name: Sanitize repo owner
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         id: repo_slug
         with:
           result-encoding: string
