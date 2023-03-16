@@ -182,7 +182,7 @@ jobs:
       # Upload the k8s debug archive, so we can use it for investigating
       - name: Upload k8s debug archive
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: k8s-debug-archive-${{matrix.keptn-version}}
           path: k8s_debug/
