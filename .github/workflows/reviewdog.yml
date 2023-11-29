@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code.
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.6.0
       - name: Set up Go
         uses: actions/setup-go@v3.2.1
         with:
