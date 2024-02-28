@@ -3,7 +3,7 @@ module github.com/keptn-service-template-go
 go 1.17
 
 require (
-	github.com/cloudevents/sdk-go/v2 v2.10.0
+	github.com/cloudevents/sdk-go/v2 v2.15.1
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/keptn/go-utils v0.17.1-0.20220718120931-866624f8ce42
 	github.com/mitchellh/mapstructure v1.5.0
