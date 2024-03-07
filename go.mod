@@ -7,7 +7,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/keptn/go-utils v0.17.1-0.20220718120931-866624f8ce42
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v3 v3.0.1 // indirect; pin v3.0.1 >= because of CVE-2022-28948
 	k8s.io/api v0.24.1
 	k8s.io/apimachinery v0.24.1
