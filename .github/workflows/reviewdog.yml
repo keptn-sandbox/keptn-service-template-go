@@ -14,7 +14,7 @@ jobs:
         id: go
       - name: Install linters
         run: "( mkdir linters && cd linters && go get golang.org/x/lint/golint )"
-      - uses: reviewdog/action-setup@v1.0.3
+      - uses: reviewdog/action-setup@v1.3.0
         with:
           reviewdog_version: latest
       - name: Run reviewdog
