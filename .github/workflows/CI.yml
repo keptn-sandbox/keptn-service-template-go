@@ -54,7 +54,7 @@ jobs:
 
       - name: "Get Previous tag"
         id: get_previous_tag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1.1"
+        uses: "WyriHaximus/github-action-get-previous-tag@v1.4"
         with:
           fallback: "0.0.1"
       - name: "Get next patch version"
